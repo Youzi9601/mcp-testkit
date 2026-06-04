@@ -21,6 +21,4 @@ jobs:
       - run: pnpm -r run test:coverage
 
       - name: Publish to npm
-        run: pnpm -r publish --access public --no-git-checks
-        env:
-          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm -r publish --access public --no-git-checks --provenance
