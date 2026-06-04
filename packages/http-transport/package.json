@@ -1,0 +1,33 @@
+{
+  "name": "@youzi9601/mcp-testkit-http",
+  "version": "0.1.0",
+  "description": "HTTP transport for MCP test servers",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "lint": "echo 'No linter configured'"
+  },
+  "peerDependencies": {
+    "vitest": ">=2.0.0 <3.0.0",
+    "@youzi9601/mcp-testkit": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "2.1.8",
+    "@vitest/runner": "2.1.8",
+    "@vitest/utils": "2.1.8",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}

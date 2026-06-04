@@ -1,0 +1,30 @@
+{
+  "name": "@youzi9601/mcp-testkit-snapshot",
+  "version": "0.1.0",
+  "description": "Snapshot testing plugin for MCP servers",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "test": "vitest run",
+    "clean": "rm -rf dist"
+  },
+  "peerDependencies": {
+    "vitest": ">=2.0.0 <3.0.0",
+    "@youzi9601/mcp-testkit": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "2.1.8",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  }
+}
