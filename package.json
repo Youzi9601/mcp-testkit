@@ -3,7 +3,29 @@
   "version": "0.1.0",
   "private": true,
   "description": "Testing framework for MCP servers",
-  "packageManager": "pnpm@9.0.0",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "testing",
+    "typescript"
+  ],
+  "homepage": "https://github.com/youzi9601/mcp-testkit#readme",
+  "bugs": {
+    "url": "https://github.com/youzi9601/mcp-testkit/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/youzi9601/mcp-testkit.git"
+  },
+  "license": "MIT",
+  "author": "Youzi9601",
+  "type": "module",
+  "main": "packages/core/dist/index.js",
+  "types": "./packages/core/dist/index.d.ts",
+  "directories": {
+    "doc": "docs"
+  },
   "scripts": {
     "build": "pnpm -r --parallel run build",
     "test": "pnpm -r run test",
@@ -16,5 +38,6 @@
     "@vitest/coverage-v8": "^2.1.8",
     "typescript": "5.7.2",
     "vitest": "2.1.8"
-  }
+  },
+  "packageManager": "pnpm@9.0.0"
 }
