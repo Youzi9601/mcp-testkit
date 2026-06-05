@@ -8,55 +8,104 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+
     permissions:
       id-token: write
       contents: read
       actions: read
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Verify Test workflow passed
-        run: |
-          GH_RUN=$(gh run list --workflow=ci.yml --commit="$GITHUB_SHA" --status=completed --json conclusion,databaseId --jq '.[0]')
-          if [ -z "$GH_RUN" ] || [ "$GH_RUN" = "null" ]; then
-            echo "No completed Test run found for this commit"
-            exit 1
-          fi
-          CONCLUSION=$(echo "$GH_RUN" | jq -r '.conclusion')
-          if [ "$CONCLUSION" != "success" ]; then
-            echo "Test workflow conclusion: $CONCLUSION"
-            exit 1
-          fi
-          echo "Test workflow passed (run ID: $(echo "$GH_RUN" | jq -r '.databaseId'))"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
 
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
-          registry-url: 'https://registry.npmjs.org/'
+          node-version: '22'
+          registry-url: https://registry.npmjs.org/
+          scope: '@youzi9601'
 
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm -C packages/core run build && pnpm -r --parallel run build
+      - name: Upgrade npm
+        run: |
+          npm install -g npm@latest
+          echo "npm version: $(npm -v)"
 
-      - run: pnpm -r run test:coverage
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
-      - name: Bump versions to match git tag
+      - name: Build core packages
+        run: pnpm -C packages/core run build
+
+      - name: Build all packages
+        run: pnpm -r run build
+
+      - name: Run tests
+        run: pnpm -r run test:coverage
+
+      - name: Set version from tag
         run: |
           TAG_VERSION=${GITHUB_REF#refs/tags/v}
-          for pkg in package.json packages/*/package.json; do
-            if [ -f "$pkg" ]; then
-              sed -i "s/^\"version\": \"[^\"]*\"/\"version\": \"$TAG_VERSION\"/" "$pkg"
-              sed -i 's/"workspace:\*/"*/g' "$pkg"
-            fi
+          echo "Release version: $TAG_VERSION"
+
+          for pkg in packages/*/package.json; do
+            echo "Updating $pkg"
+
+            node -e "
+              const fs=require('fs');
+              const file='$pkg';
+              const json=JSON.parse(fs.readFileSync(file,'utf8'));
+              json.version='$TAG_VERSION';
+              fs.writeFileSync(file, JSON.stringify(json, null, 2));
+            "
           done
 
-      - name: Publish to npm
+      - name: Verify packages
+        run: |
+          echo "===== core package ====="
+          cd packages/core
+          node -p "require('./package.json').name"
+          node -p "require('./package.json').version"
+          npm pack --dry-run
+
+          echo "===== registry check ====="
+          npm view @youzi9601/mcp-testkit version || true
+
+      - name: Debug .npmrc
+        run: |
+          echo "=== .npmrc content ==="
+          cat /home/runner/work/_temp/.npmrc 2>/dev/null || echo "(file not found)"
+          echo
+          echo "=== npm config ls -l | grep -E 'registry|auth' ==="
+          npm config ls -l | grep -E 'registry|auth|token|scope' | head -20
+
+      - name: Debug environment
+        run: |
+          echo "GITHUB_REPOSITORY=$GITHUB_REPOSITORY"
+          echo "GITHUB_REF=$GITHUB_REF"
+          npm config list
+
+      - name: Publish packages
         run: |
           for dir in packages/*; do
             if [ -f "$dir/package.json" ] && [ -d "$dir/dist" ]; then
-              echo "Publishing $dir"
-              (cd "$dir" && npm publish --ignore-scripts --access public --tag latest --workspaces=false --provenance)
+
+              echo "=============================="
+              echo "Publishing: $dir"
+
+              cd "$dir"
+
+              echo "Package: $(node -p "require('./package.json').name")"
+              echo "Version: $(node -p "require('./package.json').version")"
+
+              npm publish \
+                --access public \
+                --tag latest \
+                --ignore-scripts \
+                --loglevel verbose
+
+              cd -
             fi
           done

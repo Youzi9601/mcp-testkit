@@ -1,8 +1,14 @@
 {
   "name": "@youzi9601/mcp-testkit-vitest",
   "version": "0.1.1",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -21,5 +27,9 @@
   },
   "dependencies": {
     "@youzi9601/mcp-testkit": "workspace:*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Youzi9601/mcp-testkit"
   }
 }

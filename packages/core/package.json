@@ -1,6 +1,10 @@
 {
   "name": "@youzi9601/mcp-testkit",
   "version": "0.1.1",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -17,7 +21,9 @@
       "default": "./dist/test-utils/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "test": "vitest run",
@@ -30,5 +36,9 @@
   },
   "devDependencies": {
     "vitest": "2.1.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Youzi9601/mcp-testkit"
   }
 }

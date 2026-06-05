@@ -1,6 +1,10 @@
 {
   "name": "@youzi9601/mcp-testkit-snapshot",
   "version": "0.1.1",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "description": "Snapshot testing plugin for MCP servers",
   "type": "module",
   "types": "./dist/index.d.ts",
@@ -26,5 +30,9 @@
     "vitest": "2.1.8",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Youzi9601/mcp-testkit"
   }
 }

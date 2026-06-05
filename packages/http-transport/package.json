@@ -1,6 +1,10 @@
 {
   "name": "@youzi9601/mcp-testkit-http",
   "version": "0.1.1",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "description": "HTTP transport for MCP test servers",
   "type": "module",
   "exports": {
@@ -29,5 +33,9 @@
     "@vitest/utils": "2.1.8",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Youzi9601/mcp-testkit"
   }
 }

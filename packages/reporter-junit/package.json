@@ -1,6 +1,10 @@
 {
   "name": "@youzi9601/mcp-testkit-reporter-junit",
   "version": "0.1.1",
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "description": "JUnit XML reporter for MCP test results",
   "type": "module",
   "exports": {
@@ -28,5 +32,9 @@
     "@vitest/utils": "2.1.8",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Youzi9601/mcp-testkit"
   }
 }
