@@ -8,17 +8,55 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
     steps:
       - uses: actions/checkout@v4
+
+      - name: Verify Test workflow passed
+        run: |
+          GH_RUN=$(gh run list --workflow=ci.yml --commit="$GITHUB_SHA" --status=completed --json conclusion,databaseId --jq '.[0]')
+          if [ -z "$GH_RUN" ] || [ "$GH_RUN" = "null" ]; then
+            echo "No completed Test run found for this commit"
+            exit 1
+          fi
+          CONCLUSION=$(echo "$GH_RUN" | jq -r '.conclusion')
+          if [ "$CONCLUSION" != "success" ]; then
+            echo "Test workflow conclusion: $CONCLUSION"
+            exit 1
+          fi
+          echo "Test workflow passed (run ID: $(echo "$GH_RUN" | jq -r '.databaseId'))"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
+          registry-url: 'https://registry.npmjs.org/'
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm -C packages/core run build && pnpm -r --parallel run build
+
       - run: pnpm -r run test:coverage
 
+      - name: Bump versions to match git tag
+        run: |
+          TAG_VERSION=${GITHUB_REF#refs/tags/v}
+          for pkg in package.json packages/*/package.json; do
+            if [ -f "$pkg" ]; then
+              sed -i "s/^\"version\": \"[^\"]*\"/\"version\": \"$TAG_VERSION\"/" "$pkg"
+              sed -i 's/"workspace:\*/"*/g' "$pkg"
+            fi
+          done
+
       - name: Publish to npm
-        run: pnpm -r publish --access public --no-git-checks --provenance
+        run: |
+          for dir in packages/*; do
+            if [ -f "$dir/package.json" ] && [ -d "$dir/dist" ]; then
+              echo "Publishing $dir"
+              (cd "$dir" && npm publish --ignore-scripts --access public --tag latest --workspaces=false --provenance)
+            fi
+          done

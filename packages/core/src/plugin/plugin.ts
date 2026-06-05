@@ -17,8 +17,8 @@ export interface Plugin {
   readonly name: string
   /** Plugin version (SemVer). */
   readonly version: string
-  /** Supported @youzi9601/mcp-testkit core version range (SemVer range). */
-  readonly supportedCoreVersions: string
+  /** Supported @youzi9601/mcp-testkit core version range (SemVer range). Optional — if omitted, no version check is performed. */
+  readonly supportedCoreVersions?: string
   /**
    * Plugin initialization.
    * @param context - Plugin context (provides registry, etc.)

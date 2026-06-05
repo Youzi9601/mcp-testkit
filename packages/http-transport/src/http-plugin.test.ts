@@ -61,9 +61,9 @@ describe('mcpTestkitHttp plugin', () => {
 
     expect(plugin).toMatchObject({
       name: '@youzi9601/mcp-testkit-http',
-      version: '0.2.0',
-      supportedCoreVersions: '^0.1.0',
+      version: expect.stringMatching(/^\d+\.\d+\.\d+$/),
     })
+    // supportedCoreVersions is optional — omit from assertion
     expect(typeof plugin.register).toBe('function')
   })
 

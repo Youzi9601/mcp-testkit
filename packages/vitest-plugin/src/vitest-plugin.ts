@@ -5,6 +5,7 @@
 
 import type { Plugin } from '@youzi9601/mcp-testkit'
 import { registerMatchers } from '@youzi9601/mcp-testkit'
+import { version } from '../../../package.json'
 
 /**
  * Creates a Vitest plugin.
@@ -24,8 +25,7 @@ import { registerMatchers } from '@youzi9601/mcp-testkit'
 export default function mcpTestkit(): Plugin {
   return {
     name: '@youzi9601/mcp-testkit-vitest',
-    version: '0.1.0',
-    supportedCoreVersions: '^0.1.0',
+    version,
     register() {
       // Register MCP-specific matchers
       registerMatchers()

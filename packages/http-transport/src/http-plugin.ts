@@ -18,6 +18,7 @@
 import type { Plugin } from '@youzi9601/mcp-testkit'
 import { createMcpServer } from '@youzi9601/mcp-testkit'
 import { HttpTransport, type HttpTransportOptions } from './http-transport.js'
+import { version } from '../../../package.json'
 
 /**
  * Options for creating an MCP server via HTTP transport.
@@ -82,8 +83,7 @@ export default function mcpTestkitHttp(
 ): Plugin {
   return {
     name: '@youzi9601/mcp-testkit-http',
-    version: '0.2.0',
-    supportedCoreVersions: '^0.1.0',
+    version,
 
     register() {
       // No custom matchers to register — matchers are handled by

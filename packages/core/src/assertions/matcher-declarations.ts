@@ -53,8 +53,10 @@ declare module 'vitest' {
     // Phase 2 — Content matchers
     /**
      * Asserts the response has a content array with at least one entry.
+     * @param options - Optional filter by content type
+     * @param options.contentType - Filter by content type: 'text' | 'image' | 'resource'
      */
-    toHaveContent(): void
+    toHaveContent(options?: { contentType?: string }): void
 
     /**
      * Asserts the response content contains the given text.

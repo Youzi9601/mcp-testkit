@@ -77,12 +77,11 @@ export function setup(dir: string): void {
  */
 export function SnapshotPlugin(): {
   name: string
-  setup(): void
+  setup(): Promise<void>
 } {
   return {
     name: 'mcp-testkit-snapshot',
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     async setup() {
       setSnapshotManager(new SnapshotManager(snapshotDir ?? './snapshots'))
 

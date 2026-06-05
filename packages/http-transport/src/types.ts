@@ -1,6 +1,5 @@
 /**
  * Transport interface for MCP server communication.
- * Copied from @youzi9601/mcp-testkit to keep this package self-contained.
  */
 
 /**
@@ -36,27 +35,4 @@ export interface Transport {
   onNotification?(handler: (notification: object) => void): void
 }
 
-/* istanbul ignore next */
-// Error classes are only instantiated by transport implementations; not directly tested here
-export class TransportError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'TransportError'
-  }
-}
-
-/* istanbul ignore next */
-export class ServerSpawnError extends Error {
-  constructor(message: string, public readonly exitCode: number | null) {
-    super(message)
-    this.name = 'ServerSpawnError'
-  }
-}
-
-/* istanbul ignore next */
-export class TimeoutError extends Error {
-  constructor(message: string) {
-    super(message)
-    this.name = 'TimeoutError'
-  }
-}
+export { TransportError, ServerSpawnError, TimeoutError } from '@youzi9601/mcp-testkit'

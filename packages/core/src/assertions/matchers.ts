@@ -2,18 +2,27 @@
  * Custom Vitest matchers for MCP testing.
  *
  * This module provides MCP-specific matchers that extend Vitest's expect().
- * All helpers are defined internally.
+ * Helper functions are imported from `matcher-helpers.ts`.
  */
 
 /// <reference types="vitest/globals" />
 
-import type { McpResponse, McpErrorResponse } from '../types/mcp.js'
+import {
+  isMcpResponse,
+  isErrorResponse,
+  getContent,
+  getTextContent,
+  getFirstContentType,
+  isMcpErrorObj,
+  getMcpError,
+  isTransportError,
+  isTimeoutError,
+  isFromToolError,
+} from './matcher-helpers.js'
 
 // Vitest 2.x does not export MatcherState — mirror the minimal interface locally
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyMatcherState = { isNot: boolean; promise: Promise<any>; utils: readonly { name: string; fn: (...args: any[]) => any }[]; testPath?: string }
-
-// ─── Helper Types ────────────────────────────────────────────────────────────
 
 interface JsonRpcContent {
   type: 'text' | 'image' | 'resource'
@@ -21,124 +30,6 @@ interface JsonRpcContent {
   data?: string
   mimeType?: string
   resource?: { uri: string; mimeType?: string }
-}
-
-// ─── Core Type Checks ────────────────────────────────────────────────────────
-
-function isMcpResponse(value: unknown): value is McpResponse {
-  if (!value || typeof value !== 'object') return false
-  const obj = value as Record<string, unknown>
-  return obj.jsonrpc === '2.0' && ('result' in obj || 'error' in obj)
-}
-
-function isErrorResponse(value: unknown): value is McpErrorResponse {
-  if (!value || typeof value !== 'object') return false
-  const obj = value as Record<string, unknown>
-  return 'error' in obj && typeof obj.error === 'object' && obj.error !== null
-}
-
-// ─── Content Extraction ──────────────────────────────────────────────────────
-
-function getContent(response: unknown, contentType?: string): JsonRpcContent[] | undefined {
-  let content: JsonRpcContent[] | undefined
-
-  if (isMcpResponse(response)) {
-    if ('result' in response && response.result && typeof response.result === 'object') {
-      const result = response.result as Record<string, unknown>
-      if (Array.isArray(result.content)) {
-        content = result.content as JsonRpcContent[]
-      }
-    }
-  } else if (response && typeof response === 'object') {
-    const obj = response as Record<string, unknown>
-    if (Array.isArray(obj.content)) {
-      content = obj.content as JsonRpcContent[]
-    }
-  }
-
-  if (!content) return undefined
-  if (contentType) {
-    return content.filter(item => item.type === contentType)
-  }
-  return content
-}
-
-function getTextContent(response: unknown, ignoreCase = false): string {
-  const content = getContent(response)
-  if (!content) return ''
-  const texts = content.filter(item => item.type === 'text' && item.text).map(item => item.text as string)
-  let result = texts.join('')
-  if (ignoreCase) result = result.toLowerCase()
-  return result
-}
-
-function getFirstContentType(response: unknown): string | undefined {
-  const content = getContent(response)
-  if (!content || content.length === 0) return undefined
-  return content[0].type
-}
-
-// ─── MCP Error Utilities ─────────────────────────────────────────────────────
-
-function isMcpErrorObj(value: unknown): value is { code: number; message: string; data?: unknown } {
-  if (!value || typeof value !== 'object') return false
-  const obj = value as Record<string, unknown>
-  return typeof obj.code === 'number' && typeof obj.message === 'string'
-}
-
-function getMcpError(value: unknown): { code: number; message: string; data?: unknown } | null {
-  if (!value || typeof value !== 'object') return null
-  const obj = value as Record<string, unknown>
-  if ('error' in obj && isMcpErrorObj(obj.error)) {
-    return obj.error as { code: number; message: string; data?: unknown }
-  }
-  if (isMcpErrorObj(obj)) {
-    return { code: obj.code as number, message: obj.message as string, data: obj.data }
-  }
-  return null
-}
-
-function isTransportError(value: unknown, expectedMessage?: string): boolean {
-  if (!value || typeof value !== 'object') return false
-  const obj = value as Record<string, unknown>
-  if (obj.name === 'TransportError' || obj.name === 'ConnectionLostError') {
-    if (expectedMessage && typeof obj.message === 'string') {
-      return obj.message.includes(expectedMessage)
-    }
-    return true
-  }
-  if (obj.name === 'Error' && 'code' in obj && obj.code === -32000) {
-    if (expectedMessage && typeof obj.message === 'string') {
-      return obj.message.includes(expectedMessage)
-    }
-    return true
-  }
-  return false
-}
-
-function isTimeoutError(value: unknown, expectedMethod?: string): boolean {
-  if (!value || typeof value !== 'object') return false
-  const obj = value as Record<string, unknown>
-  if (obj.name === 'TimeoutError') {
-    if (expectedMethod && obj.method !== expectedMethod) return false
-    return true
-  }
-  return false
-}
-
-function isFromToolError(
-  value: unknown,
-  expectedToolName: string,
-  expectedArgs?: Record<string, unknown>,
-): boolean {
-  if (!isErrorResponse(value)) return false
-  const mcpError = getMcpError(value)
-  if (!mcpError) return false
-  const data = mcpError.data as { tool?: string; args?: Record<string, unknown> } | undefined
-  if (!data?.tool) return false
-  if (data.tool !== expectedToolName) return false
-  if (expectedArgs) return JSON.stringify(data.args) === JSON.stringify(expectedArgs)
-  return true
 }
 
 // ─── Matcher Registration ────────────────────────────────────────────────────

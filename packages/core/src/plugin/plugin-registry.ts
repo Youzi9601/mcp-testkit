@@ -55,7 +55,7 @@ export class PluginRegistry {
    * @throws {Error} throws on major version mismatch
    */
   register(plugin: Plugin): void {
-    if (this.strict) {
+    if (this.strict && plugin.supportedCoreVersions) {
       checkVersionCompatibility(plugin.supportedCoreVersions, this.coreVersion, plugin.name)
     }
     plugins.set(plugin.name, plugin)
