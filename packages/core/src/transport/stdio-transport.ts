@@ -86,9 +86,24 @@ export class StdioTransport implements Transport {
           this.handleStdout(chunk.toString())
         })
 
+        // Wait until subprocess has written at least one stderr line, or fall back after 100ms.
+        // This ensures getStderr() returns data immediately after start() resolves.
+        let stderrSeen = false
+        const checkStderr = setInterval(() => {
+          if (this.stderrBuffer.length > 0) {
+            stderrSeen = true
+            clearTimeout(timeoutId)
+            clearInterval(checkStderr)
+            resolve()
+          }
+        }, 10)
+
         setTimeout(() => {
-          clearTimeout(timeoutId)
-          resolve()
+          clearInterval(checkStderr)
+          if (!stderrSeen) {
+            clearTimeout(timeoutId)
+            resolve()
+          }
         }, 100)
       } catch (err) {
         clearTimeout(timeoutId)
