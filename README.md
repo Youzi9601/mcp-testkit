@@ -4,7 +4,7 @@
 > Vitest-native · TypeScript-first · Snapshot support · Zero SDK dependency
 
 [![npm version](https://img.shields.io/npm/v/@youzi9601/mcp-testkit?logo=npm)](https://www.npmjs.com/package/@youzi9601/mcp-testkit)
-[![Test](https://github.com/youzi9601/mcp-testkit/actions/workflows/test.yml/badge.svg)](https://github.com/youzi9601/mcp-testkit)
+[![Test](https://github.com/youzi9601/mcp-testkit/actions/workflows/ci.yml/badge.svg)](https://github.com/youzi9601/mcp-testkit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ---
