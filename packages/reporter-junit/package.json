@@ -1,11 +1,19 @@
 {
   "name": "@youzi9601/mcp-testkit-reporter-junit",
   "version": "0.1.1",
+  "description": "JUnit XML reporter for MCP test results",
+  "keywords": [
+    "mcp",
+    "junit",
+    "reporter",
+    "xml",
+    "test-report",
+    "vitest"
+  ],
   "publishConfig": {
     "access": "public",
     "provenance": true
   },
-  "description": "JUnit XML reporter for MCP test results",
   "type": "module",
   "exports": {
     ".": {

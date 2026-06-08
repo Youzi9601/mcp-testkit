@@ -1,6 +1,14 @@
 {
   "name": "@youzi9601/mcp-testkit-vitest",
   "version": "0.1.1",
+  "description": "Vitest plugin for mcp-testkit",
+  "keywords": [
+    "mcp",
+    "vitest",
+    "vitest-plugin",
+    "testing",
+    "model-context-protocol"
+  ],
   "publishConfig": {
     "access": "public",
     "provenance": true

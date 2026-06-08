@@ -1,11 +1,18 @@
 {
   "name": "@youzi9601/mcp-testkit-snapshot",
   "version": "0.1.1",
+  "description": "Snapshot testing plugin for MCP servers",
+  "keywords": [
+    "mcp",
+    "snapshot",
+    "snapshot-testing",
+    "vitest",
+    "model-context-protocol"
+  ],
   "publishConfig": {
     "access": "public",
     "provenance": true
   },
-  "description": "Snapshot testing plugin for MCP servers",
   "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {

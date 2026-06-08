@@ -1,6 +1,17 @@
 {
   "name": "@youzi9601/mcp-testkit",
   "version": "0.1.1",
+  "description": "Testing framework for MCP servers",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "testing",
+    "test-framework",
+    "typescript",
+    "json-rpc",
+    "vitest"
+  ],
   "publishConfig": {
     "access": "public",
     "provenance": true
