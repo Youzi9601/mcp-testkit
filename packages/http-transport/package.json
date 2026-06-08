@@ -1,6 +1,6 @@
 {
   "name": "@youzi9601/mcp-testkit-http",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "HTTP transport for MCP test servers",
   "keywords": [
     "mcp",
