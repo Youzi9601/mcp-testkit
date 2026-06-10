@@ -5,7 +5,7 @@ import { describe, it, expect } from 'vitest'
 import { mcpTestkit } from './index.js'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const pkg = JSON.parse(readFileSync(resolve(__dirname, '../../../package.json'), 'utf8'))
+const pkg = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf8'))
 
 describe('mcpTestkit', () => {
   it('should export mcpTestkit as function', () => {

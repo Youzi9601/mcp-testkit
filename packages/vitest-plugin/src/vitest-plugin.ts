@@ -5,7 +5,7 @@
 
 import type { Plugin } from '@youzi9601/mcp-testkit'
 import { registerMatchers } from '@youzi9601/mcp-testkit'
-import { version } from '../../../package.json'
+import { version } from '../package.json'
 
 /**
  * Creates a Vitest plugin.

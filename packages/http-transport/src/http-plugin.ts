@@ -18,7 +18,7 @@
 import type { Plugin } from '@youzi9601/mcp-testkit'
 import { createMcpServer } from '@youzi9601/mcp-testkit'
 import { HttpTransport, type HttpTransportOptions } from './http-transport.js'
-import { version } from '../../../package.json'
+import { version } from '../package.json'
 
 /**
  * Options for creating an MCP server via HTTP transport.

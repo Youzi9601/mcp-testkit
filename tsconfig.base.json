@@ -13,6 +13,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "emitDeclarationOnly": false,
+    "resolveJsonModule": true,
     "stripInternal": false
   }
 }
