@@ -32,12 +32,12 @@
     "lint": "echo 'No linter configured'"
   },
   "peerDependencies": {
-    "vitest": ">=2.0.0 <3.0.0"
+    "vitest": ">=2.0.0 <4.0.0"
   },
   "devDependencies": {
     "vitest": "3.2.6",
-    "@vitest/runner": "2.1.8",
-    "@vitest/utils": "2.1.8",
+    "@vitest/runner": "^3.0.0",
+    "@vitest/utils": "^3.0.0",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
   },

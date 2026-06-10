@@ -24,7 +24,7 @@
     }
   },
   "peerDependencies": {
-    "vitest": ">=2.0.0 <3.0.0",
+    "vitest": ">=2.0.0 <4.0.0",
     "@youzi9601/mcp-testkit": "^0.1.0"
   },
   "scripts": {
