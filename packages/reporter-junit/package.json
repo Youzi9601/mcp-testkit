@@ -1,6 +1,6 @@
 {
   "name": "@youzi9601/mcp-testkit-reporter-junit",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "JUnit XML reporter for MCP test results",
   "keywords": [
     "mcp",
@@ -45,7 +45,9 @@
     "typescript": "^5.0.0"
   },
   "license": "MIT",
-  "engines": { "node": ">=18" },
+  "engines": {
+    "node": ">=18"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Youzi9601/mcp-testkit"
