@@ -18,7 +18,12 @@
 import type { Plugin } from '@youzi9601/mcp-testkit'
 import { createMcpServer } from '@youzi9601/mcp-testkit'
 import { HttpTransport, type HttpTransportOptions } from './http-transport.js'
-import { version } from '../package.json'
+
+/**
+ * Resolves the package version at runtime.
+ * Falls back to '0.0.0' if not set by npm (e.g., direct from source).
+ */
+const version = process.env.npm_package_version ?? '0.0.0'
 
 /**
  * Options for creating an MCP server via HTTP transport.
