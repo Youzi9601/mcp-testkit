@@ -48,6 +48,8 @@
   "devDependencies": {
     "vitest": "3.2.6"
   },
+  "license": "MIT",
+  "engines": { "node": ">=18" },
   "repository": {
     "type": "git",
     "url": "https://github.com/Youzi9601/mcp-testkit"

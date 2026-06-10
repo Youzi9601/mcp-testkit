@@ -14,13 +14,16 @@
     "provenance": true
   },
   "type": "module",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     }
   },
+  "license": "MIT",
+  "engines": { "node": ">=18" },
   "files": [
     "dist"
   ],

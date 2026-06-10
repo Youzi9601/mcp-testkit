@@ -21,8 +21,6 @@
   "license": "MIT",
   "author": "Youzi9601",
   "type": "module",
-  "main": "packages/core/dist/index.js",
-  "types": "./packages/core/dist/index.d.ts",
   "directories": {
     "doc": "docs"
   },
@@ -31,7 +29,8 @@
     "test": "pnpm -r run test",
     "test:coverage": "pnpm -r run test:coverage",
     "lint": "pnpm -r run lint",
-    "typecheck": "pnpm -r run typecheck"
+    "typecheck": "pnpm -r run typecheck",
+    "bump:version": "node --input-type=module -e \"\nimport { readFileSync, writeFileSync } from 'node:fs';\nimport { join, dirname } from 'node:path';\nimport { fileURLToPath } from 'node:url';\n\nconst __dirname = dirname(fileURLToPath(import.meta.url));\nconst pkgs = ['package.json', ...['core','http-transport','reporter-junit','snapshot','vitest-plugin'].map(p => 'packages/'+p+'/package.json')];\n\npkgs.forEach(f => {\n  const d = JSON.parse(readFileSync(join(__dirname, f), 'utf8'));\n  if (d.private) return;\n  const [a,b,c] = d.version.split('.').map(Number);\n  d.version = [a,b,c+1].join('.');\n  writeFileSync(join(__dirname, f), JSON.stringify(d, null, 2) + '\\n');\n  console.log(d.name + '@' + d.version);\n});\n\""
   },
   "devDependencies": {
     "@types/node": "20.17.0",

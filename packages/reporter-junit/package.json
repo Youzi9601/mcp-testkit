@@ -15,6 +15,7 @@
     "provenance": true
   },
   "type": "module",
+  "main": "./dist/index.js",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -34,13 +35,17 @@
   "peerDependencies": {
     "vitest": ">=2.0.0 <4.0.0"
   },
+  "dependencies": {
+    "@vitest/runner": "^3.0.0",
+    "@vitest/utils": "^3.0.0"
+  },
   "devDependencies": {
     "vitest": "3.2.6",
-    "@vitest/runner": "^3.0.0",
-    "@vitest/utils": "^3.0.0",
     "@types/node": "^20.0.0",
     "typescript": "^5.0.0"
   },
+  "license": "MIT",
+  "engines": { "node": ">=18" },
   "repository": {
     "type": "git",
     "url": "https://github.com/Youzi9601/mcp-testkit"

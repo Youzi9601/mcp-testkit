@@ -29,6 +29,12 @@ importers:
 
   packages/http-transport:
     dependencies:
+      '@vitest/runner':
+        specifier: ^3.0.0
+        version: 3.2.6
+      '@vitest/utils':
+        specifier: ^3.0.0
+        version: 3.2.6
       '@youzi9601/mcp-testkit':
         specifier: workspace:*
         version: link:../core
@@ -36,12 +42,6 @@ importers:
       '@types/node':
         specifier: ^20.0.0
         version: 20.17.0
-      '@vitest/runner':
-        specifier: ^3.0.0
-        version: 3.2.6
-      '@vitest/utils':
-        specifier: ^3.0.0
-        version: 3.2.6
       typescript:
         specifier: ^5.0.0
         version: 5.7.2
@@ -50,16 +50,17 @@ importers:
         version: 3.2.6(@types/node@20.17.0)
 
   packages/reporter-junit:
-    devDependencies:
-      '@types/node':
-        specifier: ^20.0.0
-        version: 20.17.0
+    dependencies:
       '@vitest/runner':
         specifier: ^3.0.0
         version: 3.2.6
       '@vitest/utils':
         specifier: ^3.0.0
         version: 3.2.6
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.17.0
       typescript:
         specifier: ^5.0.0
         version: 5.7.2
@@ -88,8 +89,9 @@ importers:
       '@youzi9601/mcp-testkit':
         specifier: workspace:*
         version: link:../core
+    devDependencies:
       vitest:
-        specifier: '>=2.0.0 <4.0.0'
+        specifier: 3.2.6
         version: 3.2.6(@types/node@20.17.0)
 
 packages:
