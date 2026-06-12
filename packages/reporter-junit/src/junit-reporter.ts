@@ -18,7 +18,15 @@
 
 import type { Reporter } from 'vitest/reporters'
 import type { File, Suite, Test, TaskResultPack, TaskResult } from '@vitest/runner'
-import type { ErrorWithDiff } from '@vitest/utils'
+
+/** Error object shape (compatible with vitest 3.x and 4.x). ErrorWithDiff was removed in vitest 4.x. */
+type TestError = {
+  message: string
+  stack?: string
+  name?: string
+  expected?: string
+  actual?: string
+}
 import {
   formatTestSuites,
   type JUnitTestSuites,
@@ -161,7 +169,7 @@ export class JUnitReporter implements Reporter {
       suite.failures++
       const errors = result?.errors ?? []
       if (errors.length > 0) {
-        const err = errors[0] as ErrorWithDiff
+        const err = errors[0] as TestError
         testCase.failure = {
           message: err?.message ?? 'Test failed',
           type: err?.name ?? 'Error',

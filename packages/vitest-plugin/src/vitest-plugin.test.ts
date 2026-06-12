@@ -1,7 +1,10 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, it, expect } from 'vitest'
 import { mcpTestkit } from './index.js'
 
-const version = process.env.npm_package_version ?? '0.0.0'
+const pkg = JSON.parse(readFileSync(resolve('./package.json'), 'utf-8'))
+const version = pkg.version ?? '0.0.0'
 
 describe('mcpTestkit', () => {
   it('should export mcpTestkit as function', () => {

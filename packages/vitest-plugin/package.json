@@ -29,7 +29,7 @@
   },
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "test": "vitest run",
+    "test": "vitest run src",
     "typecheck": "tsc --noEmit",
     "lint": "echo 'No linter configured'"
   },
