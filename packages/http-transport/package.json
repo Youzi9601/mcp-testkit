@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@vitest/runner": "^3.0.0",
-    "@vitest/utils": "^3.0.0"
+    "@vitest/utils": "^4.1.8"
   },
   "devDependencies": {
     "vitest": "3.2.6",
