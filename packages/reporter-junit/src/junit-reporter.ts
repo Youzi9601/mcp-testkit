@@ -84,7 +84,7 @@ export class JUnitReporter implements Reporter {
   }
 
   /** @override */
-  onFinished(files: File[]): void {
+  onFinished(files: File[], _errors: unknown[]): void {
     const suites = this.buildSuites(files)
     const suiteName = this.options.suiteName ?? 'mcp-testkit'
     const outputFile = this.options.outputFile ?? 'junit.xml'

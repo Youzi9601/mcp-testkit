@@ -107,9 +107,9 @@ describe('formatSingleTestSuite', () => {
     const xml = formatSingleTestSuite(suite)
 
     // < and > should be escaped
-    expect(xml).toContain('<html>')
-    expect(xml).toContain('&')
-    expect(xml).toContain('<p>Content</p>')
+    expect(xml).toContain('&lt;html&gt;')
+    expect(xml).toContain('&amp;')
+    expect(xml).toContain('&lt;p&gt;Content&lt;/p&gt;')
   })
 })
 
