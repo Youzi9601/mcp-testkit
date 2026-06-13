@@ -1,6 +1,6 @@
 {
   "name": "@youzi9601/mcp-testkit-reporter-junit",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "JUnit XML reporter for MCP test results",
   "keywords": [
     "mcp",

@@ -61,7 +61,12 @@ process.stdin.on('data', (d) => {
       args: ['-e', 'console.error("test error")'],
     })
     await transport.start()
-    // stderr is collected but only echoed in DEBUG mode
+    // Poll: production start() resolves after a 100ms fallback; under parallel load the
+    // child stderr pipe may not yet have flushed into buffer at the moment start() returns.
+    const deadline = Date.now() + 1000
+    while (Date.now() < deadline && !transport.getStderr().includes('test error')) {
+      await new Promise((r) => setTimeout(r, 20))
+    }
     expect(transport.getStderr()).toContain('test error')
     await transport.close()
   })
