@@ -16,10 +16,15 @@
  * ```
  */
 
-import type { Reporter } from 'vitest/reporters'
-import type { File, Suite, Test, TaskResultPack, TaskResult } from '@vitest/runner'
+import { writeFileSync } from 'node:fs'
+import type { Test as TestCase, Suite as TestSuite } from '@vitest/runner'
+import {
+  formatTestSuites,
+  type JUnitTestSuite,
+  type JUnitTestCase,
+} from './xml-formatter'
 
-/** Error object shape (compatible with vitest 3.x and 4.x). ErrorWithDiff was removed in vitest 4.x. */
+/** Error object shape. Compatible with vitest 3.x and 4.x. */
 type TestError = {
   message: string
   stack?: string
@@ -27,12 +32,6 @@ type TestError = {
   expected?: string
   actual?: string
 }
-import {
-  formatTestSuites,
-  type JUnitTestSuites,
-  type JUnitTestSuite,
-  type JUnitTestCase,
-} from './xml-formatter'
 
 export interface JUnitReporterOptions {
   /** Output filename for the XML report. Defaults to 'junit.xml' */
@@ -46,13 +45,21 @@ export interface JUnitReporterOptions {
   writeFileFn?: (path: string, content: string) => void
 }
 
-export class JUnitReporter implements Reporter {
+/**
+ * JUnit XML reporter for Vitest.
+ *
+ * Implements the vitest 4.x Reporter interface:
+ * - onInit(vitest)     → initialize state, capture vitest instance
+ * - onTestRunStart()   → clear previous results
+ * - onTestRunEnd()     → build and write XML report
+ *
+ * @implements vitest Reporter interface (vitest 4.x)
+ */
+export class JUnitReporter {
   private readonly options: JUnitReporterOptions
-  private readonly taskResults = new Map<string, TaskResult | undefined>()
-  private readonly testState = new Map<string, string>()
-  private files: File[] = []
-  private startTime = 0
   private readonly writeFile: (path: string, content: string) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private vitestInstance: any
 
   constructor(options: JUnitReporterOptions = {}) {
     this.options = options
@@ -60,40 +67,31 @@ export class JUnitReporter implements Reporter {
   }
 
   private readonly defaultWriteFile = (path: string, content: string): void => {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { writeFileSync } = require('node:fs') as typeof import('node:fs')
     writeFileSync(path, content, 'utf-8')
   }
 
-  /** @override */
-  onInit(): void {
-    this.taskResults.clear()
-    this.testState.clear()
-    this.files = []
-    this.startTime = Date.now()
+  /**
+   * Called when the reporter is initialized with the Vitest instance.
+   * @override vitest Reporter.onInit
+   */
+  onInit(vitest: any): void {
+    this.vitestInstance = vitest
   }
 
-  /** @override */
-  onCollected(files?: File[]): void {
-    if (!files) return
-    this.files = files
-    this.startTime = Date.now()
-  }
+  /**
+   * Called when a new test run starts.
+   * @override vitest Reporter.onTestRunStart
+   */
+  onTestRunStart(): void {}
 
-  /** @override */
-  onTaskUpdate(packs: TaskResultPack[]): void {
-    for (const pack of packs) {
-      const [id, result] = pack
-      this.taskResults.set(id, result)
-      if (result) {
-        this.testState.set(id, result.state)
-      }
-    }
-  }
+  /**
+   * Called when the test run finishes.
+   * @override vitest Reporter.onTestRunEnd
+   */
+  onTestRunEnd(): void {
+    if (!this.vitestInstance) return
 
-  /** @override */
-  onFinished(files: File[], _errors: unknown[]): void {
-    const suites = this.buildSuites(files)
+    const suites = this.buildSuites()
     const suiteName = this.options.suiteName ?? 'mcp-testkit'
     const outputFile = this.options.outputFile ?? 'junit.xml'
 
@@ -114,12 +112,18 @@ export class JUnitReporter implements Reporter {
     this.writeFile(outputFile, xml)
   }
 
-  private buildSuites(files: File[]): JUnitTestSuite[] {
+  private buildSuites(): JUnitTestSuite[] {
+    if (!this.vitestInstance) return []
+
+    const projects = this.vitestInstance.projects
     const fileMap = new Map<string, JUnitTestSuite>()
 
-    for (const file of files) {
-      const suite = this.getOrCreateSuite(fileMap, file.filepath ?? 'unknown')
-      this.processSuite(file, suite)
+    for (const project of projects) {
+      if (!project.files) continue
+      for (const file of project.files) {
+        const suite = this.getOrCreateSuite(fileMap, file.filepath ?? 'unknown')
+        this.processFile(file, suite)
+      }
     }
 
     return Array.from(fileMap.values())
@@ -140,19 +144,26 @@ export class JUnitReporter implements Reporter {
     return map.get(name)!
   }
 
-  private processSuite(suite: Suite, parentSuite: JUnitTestSuite): void {
-    for (const task of suite.tasks) {
-      if (task.type === 'suite') {
-        this.processSuite(task as Suite, parentSuite)
-      } else {
-        this.processTest(task as Test, parentSuite)
-      }
+  private processFile(file: { tasks?: readonly unknown[]; filepath?: string }, parentSuite: JUnitTestSuite): void {
+    if (!file.tasks) return
+    for (const task of file.tasks) {
+      this.processTask(task as TestSuite | TestCase, parentSuite)
     }
   }
 
-  private processTest(task: Test, suite: JUnitTestSuite): void {
-    const result = this.taskResults.get(task.id)
-    const state = this.testState.get(task.id) ?? 'run'
+  private processTask(task: TestSuite | TestCase, parentSuite: JUnitTestSuite): void {
+    if (task.type === 'suite') {
+      const suite = task as TestSuite
+      for (const child of suite.tasks ?? []) {
+        this.processTask(child as TestSuite | TestCase, parentSuite)
+      }
+    } else {
+      this.processTestCase(task as TestCase, parentSuite)
+    }
+  }
+
+  private processTestCase(task: TestCase, suite: JUnitTestSuite): void {
+    const result = task.result
 
     const testCase: JUnitTestCase = {
       name: task.name,
@@ -162,14 +173,16 @@ export class JUnitReporter implements Reporter {
 
     suite.tests++
 
+    const state = result?.state ?? 'run'
+
     if (state === 'skip' || state === 'todo') {
       testCase.skipped = true
       suite.skipped++
     } else if (state === 'fail') {
       suite.failures++
-      const errors = result?.errors ?? []
+      const errors = (result?.errors ?? []) as TestError[]
       if (errors.length > 0) {
-        const err = errors[0] as TestError
+        const err = errors[0]
         testCase.failure = {
           message: err?.message ?? 'Test failed',
           type: err?.name ?? 'Error',

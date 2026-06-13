@@ -37,8 +37,8 @@
   ],
   "scripts": {
     "build": "tsc --project tsconfig.json",
-    "test": "vitest run",
-    "test:coverage": "vitest run --coverage",
+    "test": "vitest run src",
+    "test:coverage": "vitest run src --coverage",
     "typecheck": "tsc --noEmit",
     "lint": "echo 'No linter configured'"
   },
