@@ -33,9 +33,12 @@
     "bump:version": "node --input-type=module -e \"\nimport { readFileSync, writeFileSync } from 'node:fs';\nimport { join, dirname } from 'node:path';\nimport { fileURLToPath } from 'node:url';\n\nconst __dirname = dirname(fileURLToPath(import.meta.url));\nconst pkgs = ['package.json', ...['core','http-transport','reporter-junit','snapshot','vitest-plugin'].map(p => 'packages/'+p+'/package.json')];\n\npkgs.forEach(f => {\n  const d = JSON.parse(readFileSync(join(__dirname, f), 'utf8'));\n  if (d.private) return;\n  const [a,b,c] = d.version.split('.').map(Number);\n  d.version = [a,b,c+1].join('.');\n  writeFileSync(join(__dirname, f), JSON.stringify(d, null, 2) + '\\n');\n  console.log(d.name + '@' + d.version);\n});\n\""
   },
   "devDependencies": {
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "25.9.3",
     "@vitest/coverage-v8": "^3.0.0",
+    "eslint": "^9.18.0",
     "typescript": "5.7.2",
+    "typescript-eslint": "^8.61.0",
     "vitest": "3.2.6"
   },
   "packageManager": "pnpm@9.0.0"
