@@ -10,6 +10,6 @@
  * ```
  */
 
-export { registerMatchers } from './matchers.js'
-export { ValidationLevel, validateJsonRpcRequest, validateJsonRpcResponse } from './schema-validator.js'
-export type { JsonRpcContent } from './matcher-helpers.js'
+export { registerMatchers } from './matchers.js';
+export { ValidationLevel, validateJsonRpcRequest, validateJsonRpcResponse } from './schema-validator.js';
+export type { JsonRpcContent } from './matcher-helpers.js';

@@ -5,7 +5,7 @@
  * This type is NOT exported from the public API — it is for internal use only.
  */
 
-import type { JSONRPC_VERSION } from './constants.js'
+import type { JSONRPC_VERSION } from './constants.js';
 
 /**
  * Protocol options for controlling JSON-RPC and MCP version behavior.

@@ -46,7 +46,7 @@ export interface McpErrorResponse {
 }
 
 /** JSON-RPC 2.0 response (success or error). */
-export type McpResponse = McpSuccessResponse | McpErrorResponse
+export type McpResponse = McpSuccessResponse | McpErrorResponse;
 
 /** Initialize request parameters. */
 export interface InitializeParams {

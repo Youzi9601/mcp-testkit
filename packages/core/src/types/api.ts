@@ -2,8 +2,8 @@
  * Public API type definitions.
  */
 
-import type { McpProtocolOptions } from '../protocol/options.js'
-import type { Transport } from '../transport/types.js'
+import type { McpProtocolOptions } from '../protocol/options.js';
+import type { Transport } from '../transport/types.js';
 
 /**
  * Options for creating an MCP server.

@@ -9,6 +9,6 @@ export {
   createRequest,
   createNotification,
   unwrapResponse,
-} from '../protocol/protocol.js'
+} from '../protocol/protocol.js';
 
-export type { McpProtocolOptions } from '../protocol/options.js'
+export type { McpProtocolOptions } from '../protocol/options.js';

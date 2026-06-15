@@ -3,17 +3,17 @@
  * Creates an MCP server test instance.
  */
 
-import { StdioTransport } from './transport/stdio-transport.js'
+import { StdioTransport } from './transport/stdio-transport.js';
 import {
   createRequest,
   LATEST_PROTOCOL_VERSION,
   DEFAULT_CLIENT_NAME,
   DEFAULT_CLIENT_VERSION,
-} from './protocol/index.js'
-import type { ServerOptions, McpServer } from './types/api.js'
-import type { Transport } from './transport/types.js'
+} from './protocol/index.js';
+import type { ServerOptions, McpServer } from './types/api.js';
+import type { Transport } from './transport/types.js';
 
-const DEFAULT_TIMEOUT = 5000
+const DEFAULT_TIMEOUT = 5000;
 
 /**
  * Creates an MCP server test instance.
@@ -48,32 +48,32 @@ const DEFAULT_TIMEOUT = 5000
  * ```
  */
 export async function createMcpServer(options: ServerOptions): Promise<McpServer> {
-  let transport: Transport
-  const proto = options.protocol ?? {}
+  let transport: Transport;
+  const proto = options.protocol ?? {};
 
   if (options.transport) {
     // Use the pre-configured transport; caller is responsible for its lifecycle
     // except start() — we call it here for convenience so both paths are uniform.
-    transport = options.transport
-    await transport.start()
+    transport = options.transport;
+    await transport.start();
   } else if (options.command !== undefined && options.args !== undefined) {
-    const timeout = options.timeout ?? DEFAULT_TIMEOUT
+    const timeout = options.timeout ?? DEFAULT_TIMEOUT;
     transport = new StdioTransport({
       command: options.command,
       args: options.args,
       env: options.env,
       timeout,
-    })
-    await transport.start()
+    });
+    await transport.start();
   } else {
     throw new Error(
       'createMcpServer requires either options.transport or both options.command and options.args',
-    )
+    );
   }
 
   // Monotonic request ID counter — avoids Date.now() collisions under concurrent calls
-  let requestId = 0
-  const nextId = (): number => ++requestId
+  let requestId = 0;
+  const nextId = (): number => ++requestId;
 
   return {
     /**
@@ -82,15 +82,15 @@ export async function createMcpServer(options: ServerOptions): Promise<McpServer
      * @param args - Tool arguments
      */
     async callTool(name: string, args?: Record<string, unknown>): Promise<unknown> {
-      const id = nextId()
-      const request = createRequest(id, 'tools/call', { name, arguments: args ?? {} }, proto)
-      const response = await transport.send(request)
-      return response
+      const id = nextId();
+      const request = createRequest(id, 'tools/call', { name, arguments: args ?? {} }, proto);
+      const response = await transport.send(request);
+      return response;
     },
 
     /** Gets server capabilities. */
     async getCapabilities(): Promise<unknown> {
-      const id = nextId()
+      const id = nextId();
       const request = createRequest(
         id,
         'initialize',
@@ -103,30 +103,30 @@ export async function createMcpServer(options: ServerOptions): Promise<McpServer
           },
         },
         proto,
-      )
-      const response = await transport.send(request)
-      return response
+      );
+      const response = await transport.send(request);
+      return response;
     },
 
     /** Lists available tools. */
     async listTools(): Promise<unknown> {
-      const id = nextId()
-      const request = createRequest(id, 'tools/list', undefined, proto)
-      const response = await transport.send(request)
-      return response
+      const id = nextId();
+      const request = createRequest(id, 'tools/list', undefined, proto);
+      const response = await transport.send(request);
+      return response;
     },
 
     /** Lists available resources. */
     async listResources(): Promise<unknown> {
-      const id = nextId()
-      const request = createRequest(id, 'resources/list', undefined, proto)
-      const response = await transport.send(request)
-      return response
+      const id = nextId();
+      const request = createRequest(id, 'resources/list', undefined, proto);
+      const response = await transport.send(request);
+      return response;
     },
 
     /** Closes the server connection. */
     async close(): Promise<void> {
-      await transport.close()
+      await transport.close();
     },
-  }
+  };
 }

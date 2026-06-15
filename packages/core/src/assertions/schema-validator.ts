@@ -22,14 +22,14 @@ export enum ValidationLevel {
  */
 export function validateJsonRpcRequest(obj: unknown): void {
   if (typeof obj !== 'object' || obj === null) {
-    throw new Error('Request must be an object')
+    throw new Error('Request must be an object');
   }
-  const req = obj as Record<string, unknown>
+  const req = obj as Record<string, unknown>;
   if (req.jsonrpc !== '2.0') {
-    throw new Error('Missing or invalid jsonrpc field')
+    throw new Error('Missing or invalid jsonrpc field');
   }
   if (typeof req.method !== 'string') {
-    throw new Error('Missing or invalid method field')
+    throw new Error('Missing or invalid method field');
   }
 }
 
@@ -40,13 +40,13 @@ export function validateJsonRpcRequest(obj: unknown): void {
  */
 export function validateJsonRpcResponse(obj: unknown): void {
   if (typeof obj !== 'object' || obj === null) {
-    throw new Error('Response must be an object')
+    throw new Error('Response must be an object');
   }
-  const res = obj as Record<string, unknown>
+  const res = obj as Record<string, unknown>;
   if (res.jsonrpc !== '2.0') {
-    throw new Error('Missing or invalid jsonrpc field')
+    throw new Error('Missing or invalid jsonrpc field');
   }
   if (!('result' in res || 'error' in res)) {
-    throw new Error('Response must have either result or error')
+    throw new Error('Response must have either result or error');
   }
 }

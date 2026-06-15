@@ -46,39 +46,39 @@ function escapeXml(str: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
-    .replace(/'/g, '&apos;')
+    .replace(/'/g, '&apos;');
 }
 
 function formatFailure(failure: JUnitTestCase['failure']): string {
-  if (!failure) return ''
+  if (!failure) return '';
   return (
     `<failure message="${escapeXml(failure.message)}" type="${escapeXml(failure.type)}">` +
     `${escapeXml(failure.content)}</failure>`
-  )
+  );
 }
 
 function formatError(error: JUnitTestCase['error']): string {
-  if (!error) return ''
+  if (!error) return '';
   return (
     `<error message="${escapeXml(error.message)}" type="${escapeXml(error.type)}">` +
     `${escapeXml(error.content)}</error>`
-  )
+  );
 }
 
 /**
  * Formats a single test case into JUnit XML.
  */
 function formatTestCase(tc: JUnitTestCase): string {
-  const attrs = `name="${escapeXml(tc.name)}" classname="${escapeXml(tc.classname)}" time="${tc.time.toFixed(3)}"`
+  const attrs = `name="${escapeXml(tc.name)}" classname="${escapeXml(tc.classname)}" time="${tc.time.toFixed(3)}"`;
   if (tc.skipped) {
-    return `    <testcase ${attrs}>\n      <skipped/>\n    </testcase>`
+    return `    <testcase ${attrs}>\n      <skipped/>\n    </testcase>`;
   }
-  const failure = formatFailure(tc.failure)
-  const error = formatError(tc.error)
+  const failure = formatFailure(tc.failure);
+  const error = formatError(tc.error);
   if (failure || error) {
-    return `    <testcase ${attrs}>\n      ${failure}${error}\n    </testcase>`
+    return `    <testcase ${attrs}>\n      ${failure}${error}\n    </testcase>`;
   }
-  return `    <testcase ${attrs}/>`
+  return `    <testcase ${attrs}/>`;
 }
 
 /**
@@ -92,9 +92,9 @@ function formatTestSuite(suite: JUnitTestSuite): string {
     `errors="${suite.errors}"`,
     `skipped="${suite.skipped}"`,
     `time="${suite.time.toFixed(3)}"`,
-  ].join(' ')
-  const testCases = suite.testCases.map(formatTestCase).join('\n')
-  return `  <testsuite ${attrs}>\n${testCases}\n  </testsuite>`
+  ].join(' ');
+  const testCases = suite.testCases.map(formatTestCase).join('\n');
+  return `  <testsuite ${attrs}>\n${testCases}\n  </testsuite>`;
 }
 
 /**
@@ -108,9 +108,9 @@ export function formatTestSuites(suites: JUnitTestSuites): string {
     `errors="${suites.errors}"`,
     `skipped="${suites.skipped}"`,
     `time="${suites.time.toFixed(3)}"`,
-  ].join(' ')
-  const suiteBlocks = suites.suites.map(formatTestSuite).join('\n')
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<testsuites ${attrs}>\n${suiteBlocks}\n</testsuites>`
+  ].join(' ');
+  const suiteBlocks = suites.suites.map(formatTestSuite).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<testsuites ${attrs}>\n${suiteBlocks}\n</testsuites>`;
 }
 
 /**
@@ -125,7 +125,7 @@ export function formatSingleTestSuite(suite: JUnitTestSuite): string {
     `errors="${suite.errors}"`,
     `skipped="${suite.skipped}"`,
     `time="${suite.time.toFixed(3)}"`,
-  ].join(' ')
-  const testCases = suite.testCases.map(formatTestCase).join('\n')
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<testsuite ${attrs}>\n${testCases}\n</testsuite>`
+  ].join(' ');
+  const testCases = suite.testCases.map(formatTestCase).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<testsuite ${attrs}>\n${testCases}\n</testsuite>`;
 }

@@ -3,9 +3,9 @@
  * Handles request/response creation and unwrapping.
  */
 
-import type { McpJsonRpcRequest, McpResponse } from '../types/mcp.js'
-import { JSONRPC_VERSION } from './constants.js'
-import type { McpProtocolOptions } from './options.js'
+import type { McpJsonRpcRequest, McpResponse } from '../types/mcp.js';
+import { JSONRPC_VERSION } from './constants.js';
+import type { McpProtocolOptions } from './options.js';
 
 /**
  * Creates a JSON-RPC request.
@@ -26,10 +26,10 @@ export function createRequest(
     id,
     method,
     ...(params !== undefined ? { params } : {}),
-  }
+  };
   // jsonrpc is always a string; cast to satisfy literal type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return req as any as McpJsonRpcRequest
+   
+  return req as any as McpJsonRpcRequest;
 }
 
 /**
@@ -48,10 +48,10 @@ export function createNotification(
     jsonrpc: options?.jsonrpcVersion ?? (JSONRPC_VERSION as string),
     method,
     ...(params !== undefined ? { params } : {}),
-  }
+  };
   // jsonrpc is always a string; cast to satisfy literal type
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return notif as any as Omit<McpJsonRpcRequest, 'id'>
+   
+  return notif as any as Omit<McpJsonRpcRequest, 'id'>;
 }
 
 /**
@@ -62,8 +62,8 @@ export function createNotification(
  */
 export function unwrapResponse(response: McpResponse): unknown {
   if ('error' in response) {
-    const { code, message } = response.error
-    throw Object.assign(new Error(message), { code, data: response.error.data })
+    const { code, message } = response.error;
+    throw Object.assign(new Error(message), { code, data: response.error.data });
   }
-  return response.result
+  return response.result;
 }

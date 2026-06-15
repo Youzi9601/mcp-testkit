@@ -23,7 +23,7 @@
  * })
  * ```
  */
-export { setup, SnapshotPlugin } from './snapshot-plugin.js'
-export { SnapshotManager, getSnapshotManager } from './snapshot-manager.js'
-export type { SnapshotOptions } from './snapshot-plugin.js'
-export type { SnapshotFile, SnapshotEntry } from './snapshot-manager.js'
+export { setup, SnapshotPlugin } from './snapshot-plugin.js';
+export { SnapshotManager, getSnapshotManager } from './snapshot-manager.js';
+export type { SnapshotOptions } from './snapshot-plugin.js';
+export type { SnapshotFile, SnapshotEntry } from './snapshot-manager.js';

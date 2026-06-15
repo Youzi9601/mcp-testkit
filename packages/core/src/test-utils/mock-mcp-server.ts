@@ -31,7 +31,7 @@ export interface MockMcpServerOptions {
  * Uses `node -e "<inline-script>"` to avoid filesystem I/O in tests.
  */
 export class MockMcpServer {
-  private responseIndex = 0
+  private responseIndex = 0;
 
   constructor(private options: MockMcpServerOptions) {}
 
@@ -40,10 +40,10 @@ export class MockMcpServer {
    * Uses `node -e` to inline the script — no filesystem writes required.
    */
   getSpawnCommand(): { command: string; args: string[] } {
-    const script = this.getServerScript()
+    const script = this.getServerScript();
     // Escape double quotes and backslashes for shell embedding
-    const escaped = script.replace(/\\/g, '\\\\').replace(/"/g, '\\"')
-    return { command: 'node', args: ['-e', escaped] }
+    const escaped = script.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    return { command: 'node', args: ['-e', escaped] };
   }
 
   /**
@@ -52,21 +52,21 @@ export class MockMcpServer {
    */
   getServerScriptPath(): string {
     // Lazy import to avoid side-effects in pure unit tests
-    const fs = require('node:fs') as typeof import('node:fs')
-    const path = require('node:path') as typeof import('node:path')
-    const os = require('node:os') as typeof import('node:os')
-    const tmp = os.tmpdir()
-    const scriptPath = path.join(tmp, `mock-mcp-${Date.now()}.js`)
-    fs.writeFileSync(scriptPath, this.getServerScript())
-    return scriptPath
+    const fs = require('node:fs') as typeof import('node:fs');
+    const path = require('node:path') as typeof import('node:path');
+    const os = require('node:os') as typeof import('node:os');
+    const tmp = os.tmpdir();
+    const scriptPath = path.join(tmp, `mock-mcp-${Date.now()}.js`);
+    fs.writeFileSync(scriptPath, this.getServerScript());
+    return scriptPath;
   }
 
   /**
    * Gets the server script content.
    */
   getServerScript(): string {
-    const jsonrpcVersion = this.options.jsonrpcVersion ?? '2.0'
-    const NL = '\n'
+    const jsonrpcVersion = this.options.jsonrpcVersion ?? '2.0';
+    const NL = '\n';
     return '\
 const responses = ' + JSON.stringify(this.options.responses) + ';' + NL + '\
 let responseIndex = 0;' + NL + '\
@@ -87,6 +87,6 @@ process.stdin.on("data", async (chunk) => {' + NL + '\
       // ignore' + NL + '\
     }' + NL + '\
   }' + NL + '\
-});' + NL
+});' + NL;
   }
 }

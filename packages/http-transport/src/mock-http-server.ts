@@ -3,7 +3,7 @@
  * Acts as a simple HTTP endpoint that responds with JSON-RPC formatted data.
  */
 
-import http from 'node:http'
+import http from 'node:http';
 
 export interface MockHttpResponse {
   jsonrpc: string
@@ -28,43 +28,43 @@ export interface MockHttpServerOptions {
 export async function startMockHttpServer(
   options: MockHttpServerOptions,
 ): Promise<{ server: http.Server; port: number }> {
-  let responseIndex = 0
+  let responseIndex = 0;
 
   return new Promise((resolve) => {
     const server = http.createServer((req, res) => {
       if (req.method === 'POST' && req.url === '/mcp') {
-        let body = ''
+        let body = '';
         req.on('data', (chunk) => {
-          body += chunk.toString()
-        })
+          body += chunk.toString();
+        });
         req.on('end', async () => {
-          const delay = options.delayMs ?? 0
+          const delay = options.delayMs ?? 0;
           if (delay > 0) {
-            await new Promise((r) => setTimeout(r, delay))
+            await new Promise((r) => setTimeout(r, delay));
           }
 
-          const response = { ...options.responses[responseIndex % options.responses.length] }
-          responseIndex++
+          const response = { ...options.responses[responseIndex % options.responses.length] };
+          responseIndex++;
 
           res.writeHead(200, {
             'Content-Type': 'application/json',
             'Transfer-Encoding': 'chunked',
-          })
-          res.end(JSON.stringify(response) + '\n')
-        })
+          });
+          res.end(JSON.stringify(response) + '\n');
+        });
       } else {
-        res.writeHead(404)
-        res.end('Not found')
+        res.writeHead(404);
+        res.end('Not found');
       }
-    })
+    });
 
-    const port = options.port ?? 0
+    const port = options.port ?? 0;
     server.listen(port, () => {
-      const addr = server.address()
-      const actualPort = typeof addr === 'object' ? addr?.port ?? 0 : 0
-      resolve({ server, port: actualPort })
-    })
-  })
+      const addr = server.address();
+      const actualPort = typeof addr === 'object' ? addr?.port ?? 0 : 0;
+      resolve({ server, port: actualPort });
+    });
+  });
 }
 
 /**
@@ -72,6 +72,6 @@ export async function startMockHttpServer(
  */
 export function stopMockHttpServer(server: http.Server): Promise<void> {
   return new Promise((resolve) => {
-    server.close(() => resolve())
-  })
+    server.close(() => resolve());
+  });
 }

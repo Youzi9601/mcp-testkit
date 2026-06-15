@@ -8,12 +8,12 @@ export {
   JSONRPC_VERSION,
   DEFAULT_CLIENT_NAME,
   DEFAULT_CLIENT_VERSION,
-} from './constants.js'
+} from './constants.js';
 
-export type { McpProtocolOptions } from './options.js'
+export type { McpProtocolOptions } from './options.js';
 
 export {
   createRequest,
   createNotification,
   unwrapResponse,
-} from './protocol.js'
+} from './protocol.js';

@@ -15,15 +15,15 @@
  * ```
  */
 
-import type { Plugin } from '@youzi9601/mcp-testkit'
-import { createMcpServer } from '@youzi9601/mcp-testkit'
-import { HttpTransport, type HttpTransportOptions } from './http-transport.js'
+import type { Plugin } from '@youzi9601/mcp-testkit';
+import { createMcpServer } from '@youzi9601/mcp-testkit';
+import { HttpTransport, type HttpTransportOptions } from './http-transport.js';
 
 /**
  * Resolves the package version at runtime.
  * Falls back to '0.0.0' if not set by npm (e.g., direct from source).
  */
-const version = process.env.npm_package_version ?? '0.0.0'
+const version = process.env.npm_package_version ?? '0.0.0';
 
 /**
  * Options for creating an MCP server via HTTP transport.
@@ -73,9 +73,9 @@ export async function createHttpMcpServer(options: HttpServerOptions) {
     startServer: options.startServer,
     headers: options.headers,
     timeout: options.timeout,
-  })
+  });
 
-  return createMcpServer({ transport })
+  return createMcpServer({ transport });
 }
 
 /**
@@ -96,5 +96,5 @@ export default function mcpTestkitHttp(
       // 1. Enable PluginRegistry version compatibility checks
       // 2. Provide a hook point for future HTTP-specific extensions
     },
-  }
+  };
 }
