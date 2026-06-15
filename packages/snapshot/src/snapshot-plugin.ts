@@ -1,4 +1,4 @@
-import { SnapshotManager, getSnapshotManager, setSnapshotManager } from './snapshot-manager.js'
+import { SnapshotManager, getSnapshotManager, setSnapshotManager } from './snapshot-manager.js';
 
 /**
  * Vitest MatcherState — mirrored from vitest types to avoid direct dependency
@@ -7,21 +7,21 @@ import { SnapshotManager, getSnapshotManager, setSnapshotManager } from './snaps
 interface MatcherState {
   isNot: boolean
   promise: Promise<unknown>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   utils: Array<{ name: string; fn: (...args: any[]) => any }>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   expand?: boolean
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   colors?: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   diff?: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   inspectors?: any[]
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   randomSeed?: number
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   snapshotState?: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   currentTestName?: string
   testPath?: string
 }
@@ -34,7 +34,7 @@ export interface SnapshotOptions {
 }
 
 // Snapshot dir — set by setup()
-let snapshotDir: string | undefined
+let snapshotDir: string | undefined;
 
 /**
  * Initializes the global SnapshotManager with the given snapshot directory.
@@ -47,8 +47,8 @@ let snapshotDir: string | undefined
  * ```
  */
 export function setup(dir: string): void {
-  snapshotDir = dir
-  setSnapshotManager(new SnapshotManager(dir))
+  snapshotDir = dir;
+  setSnapshotManager(new SnapshotManager(dir));
 }
 
 /**
@@ -83,11 +83,11 @@ export function SnapshotPlugin(): {
     name: 'mcp-testkit-snapshot',
 
     async setup() {
-      setSnapshotManager(new SnapshotManager(snapshotDir ?? './snapshots'))
+      setSnapshotManager(new SnapshotManager(snapshotDir ?? './snapshots'));
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const vitestModule = await import('vitest')
-      const expect = (vitestModule as any).expect
+       
+      const vitestModule = await import('vitest');
+      const expect = (vitestModule as any).expect;
 
       expect.extend({
         toMatchSnapshot(
@@ -95,12 +95,12 @@ export function SnapshotPlugin(): {
           received: unknown,
           options?: SnapshotOptions,
         ) {
-          const { name = 'default', update = false } = options ?? {}
+          const { name = 'default', update = false } = options ?? {};
 
           // Received should be the result of server.listTools()
-          const response = received as Record<string, unknown>
-          const result = response?.result as Record<string, unknown> | undefined
-          const tools = result?.tools as unknown[] | undefined
+          const response = received as Record<string, unknown>;
+          const result = response?.result as Record<string, unknown> | undefined;
+          const tools = result?.tools as unknown[] | undefined;
 
           if (!Array.isArray(tools)) {
             return {
@@ -109,23 +109,23 @@ export function SnapshotPlugin(): {
               expected: name,
               message: () =>
                 `toMatchSnapshot: expected server.listTools() result with a tools array, got ${JSON.stringify(received).slice(0, 100)}`,
-            }
+            };
           }
 
-          const manager = getSnapshotManager()
-          const testFilePath = this.testPath ?? 'unknown'
+          const manager = getSnapshotManager();
+          const testFilePath = this.testPath ?? 'unknown';
 
           if (update || process.env.UPDATE_SNAPSHOTS === 'true') {
-            manager.writeSnapshot(testFilePath, name, tools)
+            manager.writeSnapshot(testFilePath, name, tools);
             return {
               pass: true,
               actual: tools,
               expected: name,
               message: () => `Snapshot "${name}" updated for ${testFilePath}`,
-            }
+            };
           }
 
-          const stored = manager.readSnapshot(testFilePath, name)
+          const stored = manager.readSnapshot(testFilePath, name);
 
           if (!stored) {
             return {
@@ -134,10 +134,10 @@ export function SnapshotPlugin(): {
               expected: name,
               message: () =>
                 `No snapshot found for "${name}". Run with UPDATE_SNAPSHOTS=true to create it.`,
-            }
+            };
           }
 
-          const pass = JSON.stringify(tools) === JSON.stringify(stored.toolList)
+          const pass = JSON.stringify(tools) === JSON.stringify(stored.toolList);
 
           return {
             pass,
@@ -147,9 +147,9 @@ export function SnapshotPlugin(): {
               pass
                 ? `Snapshot "${name}" matched`
                 : `Snapshot mismatch for "${name}". Run with UPDATE_SNAPSHOTS=true to update.`,
-          }
+          };
         },
-      })
+      });
     },
-  }
+  };
 }
