@@ -16,13 +16,13 @@
  * ```
  */
 
-import { writeFileSync } from 'node:fs'
-import type { Test as TestCase, Suite as TestSuite } from '@vitest/runner'
+import { writeFileSync } from 'node:fs';
+import type { Test as TestCase, Suite as TestSuite } from '@vitest/runner';
 import {
   formatTestSuites,
   type JUnitTestSuite,
   type JUnitTestCase,
-} from './xml-formatter'
+} from './xml-formatter';
 
 /** Error object shape. Compatible with vitest 3.x and 4.x. */
 type TestError = {
@@ -31,7 +31,7 @@ type TestError = {
   name?: string
   expected?: string
   actual?: string
-}
+};
 
 export interface JUnitReporterOptions {
   /** Output filename for the XML report. Defaults to 'junit.xml' */
@@ -56,26 +56,26 @@ export interface JUnitReporterOptions {
  * @implements vitest Reporter interface (vitest 4.x)
  */
 export class JUnitReporter {
-  private readonly options: JUnitReporterOptions
-  private readonly writeFile: (path: string, content: string) => void
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private vitestInstance: any
+  private readonly options: JUnitReporterOptions;
+  private readonly writeFile: (path: string, content: string) => void;
+   
+  private vitestInstance: any;
 
   constructor(options: JUnitReporterOptions = {}) {
-    this.options = options
-    this.writeFile = options.writeFileFn ?? this.defaultWriteFile
+    this.options = options;
+    this.writeFile = options.writeFileFn ?? this.defaultWriteFile;
   }
 
   private readonly defaultWriteFile = (path: string, content: string): void => {
-    writeFileSync(path, content, 'utf-8')
-  }
+    writeFileSync(path, content, 'utf-8');
+  };
 
   /**
    * Called when the reporter is initialized with the Vitest instance.
    * @override vitest Reporter.onInit
    */
   onInit(vitest: any): void {
-    this.vitestInstance = vitest
+    this.vitestInstance = vitest;
   }
 
   /**
@@ -89,16 +89,16 @@ export class JUnitReporter {
    * @override vitest Reporter.onTestRunEnd
    */
   onTestRunEnd(): void {
-    if (!this.vitestInstance) return
+    if (!this.vitestInstance) return;
 
-    const suites = this.buildSuites()
-    const suiteName = this.options.suiteName ?? 'mcp-testkit'
-    const outputFile = this.options.outputFile ?? 'junit.xml'
+    const suites = this.buildSuites();
+    const suiteName = this.options.suiteName ?? 'mcp-testkit';
+    const outputFile = this.options.outputFile ?? 'junit.xml';
 
-    const totalTests = suites.reduce((sum, s) => sum + s.tests, 0)
-    const totalFailures = suites.reduce((sum, s) => sum + s.failures, 0)
-    const totalSkipped = suites.reduce((sum, s) => sum + s.skipped, 0)
-    const totalErrors = suites.reduce((sum, s) => sum + s.errors, 0)
+    const totalTests = suites.reduce((sum, s) => sum + s.tests, 0);
+    const totalFailures = suites.reduce((sum, s) => sum + s.failures, 0);
+    const totalSkipped = suites.reduce((sum, s) => sum + s.skipped, 0);
+    const totalErrors = suites.reduce((sum, s) => sum + s.errors, 0);
 
     const xml = formatTestSuites({
       name: suiteName,
@@ -108,25 +108,25 @@ export class JUnitReporter {
       skipped: totalSkipped,
       time: 0,
       suites,
-    })
-    this.writeFile(outputFile, xml)
+    });
+    this.writeFile(outputFile, xml);
   }
 
   private buildSuites(): JUnitTestSuite[] {
-    if (!this.vitestInstance) return []
+    if (!this.vitestInstance) return [];
 
-    const projects = this.vitestInstance.projects
-    const fileMap = new Map<string, JUnitTestSuite>()
+    const projects = this.vitestInstance.projects;
+    const fileMap = new Map<string, JUnitTestSuite>();
 
     for (const project of projects) {
-      if (!project.files) continue
+      if (!project.files) continue;
       for (const file of project.files) {
-        const suite = this.getOrCreateSuite(fileMap, file.filepath ?? 'unknown')
-        this.processFile(file, suite)
+        const suite = this.getOrCreateSuite(fileMap, file.filepath ?? 'unknown');
+        this.processFile(file, suite);
       }
     }
 
-    return Array.from(fileMap.values())
+    return Array.from(fileMap.values());
   }
 
   private getOrCreateSuite(map: Map<string, JUnitTestSuite>, name: string): JUnitTestSuite {
@@ -139,61 +139,61 @@ export class JUnitReporter {
         skipped: 0,
         time: 0,
         testCases: [],
-      })
+      });
     }
-    return map.get(name)!
+    return map.get(name)!;
   }
 
   private processFile(file: { tasks?: readonly unknown[]; filepath?: string }, parentSuite: JUnitTestSuite): void {
-    if (!file.tasks) return
+    if (!file.tasks) return;
     for (const task of file.tasks) {
-      this.processTask(task as TestSuite | TestCase, parentSuite)
+      this.processTask(task as TestSuite | TestCase, parentSuite);
     }
   }
 
   private processTask(task: TestSuite | TestCase, parentSuite: JUnitTestSuite): void {
     if (task.type === 'suite') {
-      const suite = task as TestSuite
+      const suite = task as TestSuite;
       for (const child of suite.tasks ?? []) {
-        this.processTask(child as TestSuite | TestCase, parentSuite)
+        this.processTask(child as TestSuite | TestCase, parentSuite);
       }
     } else {
-      this.processTestCase(task as TestCase, parentSuite)
+      this.processTestCase(task as TestCase, parentSuite);
     }
   }
 
   private processTestCase(task: TestCase, suite: JUnitTestSuite): void {
-    const result = task.result
+    const result = task.result;
 
     const testCase: JUnitTestCase = {
       name: task.name,
       classname: suite.name,
       time: (result?.duration ?? 0) / 1000,
-    }
+    };
 
-    suite.tests++
+    suite.tests++;
 
-    const state = result?.state ?? 'run'
+    const state = result?.state ?? 'run';
 
     if (state === 'skip' || state === 'todo') {
-      testCase.skipped = true
-      suite.skipped++
+      testCase.skipped = true;
+      suite.skipped++;
     } else if (state === 'fail') {
-      suite.failures++
-      const errors = (result?.errors ?? []) as TestError[]
+      suite.failures++;
+      const errors = (result?.errors ?? []) as TestError[];
       if (errors.length > 0) {
-        const err = errors[0]
+        const err = errors[0];
         testCase.failure = {
           message: err?.message ?? 'Test failed',
           type: err?.name ?? 'Error',
           content: err?.stack ?? err?.message ?? '',
-        }
+        };
       }
     }
     // else: pass — no failure/error/skipped
 
-    suite.testCases.push(testCase)
+    suite.testCases.push(testCase);
   }
 }
 
-export default JUnitReporter
+export default JUnitReporter;
