@@ -32,6 +32,7 @@
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "test": "vitest run src",
+    "lint": "eslint src",
     "clean": "rm -rf dist"
   },
   "peerDependencies": {

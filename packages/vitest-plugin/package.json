@@ -25,7 +25,7 @@
     "build": "tsc --project tsconfig.json",
     "test": "vitest run src",
     "typecheck": "tsc --noEmit",
-    "lint": "echo 'No linter configured'"
+    "lint": "eslint src"
   },
   "dependencies": {
     "@youzi9601/mcp-testkit": "workspace:*"
