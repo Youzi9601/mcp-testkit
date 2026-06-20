@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@types/node": "^25.9.3",
-    "@vitest/runner": "^4.1.8",
+    "@vitest/runner": "^4.1.9",
     "@vitest/utils": "^4.1.9",
     "typescript": "^5.0.0",
     "vitest": "3.2.6"
