@@ -31,7 +31,12 @@ export interface JsonRpcResponse {
 }
 
 export interface HttpTransportOptions {
-  /** MCP HTTP endpoint URL (e.g., 'http://localhost:3000/mcp'). */
+  /**
+   * MCP HTTP endpoint URL (e.g., 'http://localhost:3000/mcp').
+   *
+   * @security The URL must be a trusted endpoint. Do not accept
+   *           unvalidated URLs from untrusted sources to prevent SSRF risks.
+   */
   url: string
   /**
    * Optional server process to start before connecting.

@@ -12,11 +12,34 @@ import { TimeoutError, TransportError, ServerSpawnError } from '../errors/index.
 
 /**
  * StdioTransport options.
+ *
+ * @security - `command` and `args` are passed directly to `child_process.spawn()`
+ *   without shell evaluation. However, callers MUST treat these as externally
+ *   controllable input and validate them before passing untrusted data.
+ *   - `command` must be an absolute or safe executable path — never unsanitized
+ *     user input that could resolve to an arbitrary program.
+ *   - `args` must be an explicitly constructed array — never spread from an
+ *     unvalidated source (e.g. `args: [...userInput]`).
+ *   - `env` is merged with `process.env`; setting `PATH` or `NODE_OPTIONS`
+ *     affects process resolution and runtime behavior.
+ *
+ * @throws {ServerSpawnError} if the command cannot be spawned (not found, permission denied).
+ * @throws {TransportError} if stdin/stdout pipes break after startup.
  */
 export interface StdioTransportOptions {
-  /** Executable command. */
+  /**
+   * Executable command (resolved by `spawn` against `PATH` if not absolute).
+   *
+   * @security - Treat as externally controllable. Validate that the value resolves
+   *   to the expected executable. Avoid relative paths derived from user input.
+   */
   command: string
-  /** Command arguments. */
+  /**
+   * Command arguments passed as `argv` to the spawned process.
+   *
+   * @security - Treat as externally controllable. Construct the array explicitly;
+   *   do not spread untrusted arrays. Each element becomes a separate argv entry.
+   */
   args: string[]
   /** Extra environment variables. */
   env?: Record<string, string>
@@ -27,8 +50,26 @@ export interface StdioTransportOptions {
 const DEFAULT_TIMEOUT = 5000;
 
 /**
- * StdioTransport — communicates with an MCP server via subprocess.
+ * StdioTransport — communicates with an MCP server via subprocess stdin/stdout.
  * Ideal for local MCP servers; 80%+ of MCP servers use this mode.
+ *
+ * ### Security model
+ * This transport calls `child_process.spawn(command, args)` **without a shell**,
+ * which provides the following guarantees:
+ * - No shell injection: meta-characters like `;`, `|`, `&&` have no special meaning.
+ * - `args` are passed as raw argv entries, not re-parsed.
+ *
+ * ### Trust boundary
+ * **The caller is responsible for validating `command` and `args` before
+ * constructing `StdioTransportOptions`.**
+ * This class does not validate that `command` points to a safe or expected binary.
+ * Calling `new StdioTransport({ command: userInput, args: [] })` with unvalidated
+ * `userInput` is an unsafe use case that the class cannot defend against.
+ *
+ * @throws {ServerSpawnError} when the subprocess cannot be started (command not found,
+ *   permission denied, or OS-level spawn failure).
+ * @throws {TransportError} when the transport is used before `start()` is called,
+ *   or when stdin/stdout pipes break during operation.
  */
 export class StdioTransport implements Transport {
   private proc: ChildProcess | null = null;

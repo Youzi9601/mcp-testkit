@@ -35,14 +35,12 @@
     "vitest": ">=2.0.0 <4.0.0",
     "@youzi9601/mcp-testkit": "workspace:*"
   },
-  "dependencies": {
-    "@vitest/runner": "^4.1.8",
-    "@vitest/utils": "^4.1.8"
-  },
   "devDependencies": {
-    "vitest": "3.2.6",
     "@types/node": "^25.9.3",
-    "typescript": "^5.0.0"
+    "@vitest/runner": "^4.1.8",
+    "@vitest/utils": "^4.1.8",
+    "typescript": "^5.0.0",
+    "vitest": "3.2.6"
   },
   "license": "MIT",
   "engines": {
