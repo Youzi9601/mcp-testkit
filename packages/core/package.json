@@ -1,6 +1,6 @@
 {
   "name": "@youzi9601/mcp-testkit",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Testing framework for MCP servers",
   "keywords": [
     "mcp",

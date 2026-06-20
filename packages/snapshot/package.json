@@ -1,6 +1,6 @@
 {
   "name": "@youzi9601/mcp-testkit-snapshot",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Snapshot testing plugin for MCP servers",
   "keywords": [
     "mcp",
