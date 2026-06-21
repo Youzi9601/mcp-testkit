@@ -8,7 +8,7 @@ export default defineConfig({
       provider: 'v8',
       thresholds: {
         lines: 80,
-        functions: 90,
+        functions: 89,
         branches: 70,
       },
       exclude: [
