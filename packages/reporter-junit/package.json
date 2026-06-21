@@ -43,7 +43,7 @@
     "@vitest/runner": "^4.1.9",
     "@vitest/utils": "^4.1.9",
     "typescript": "^5.0.0",
-    "vitest": "3.2.6"
+    "vitest": "4.1.9"
   },
   "license": "MIT",
   "engines": {
