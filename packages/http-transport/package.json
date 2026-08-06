@@ -36,9 +36,9 @@
     "@youzi9601/mcp-testkit": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^25.9.3",
-    "@vitest/runner": "^4.1.9",
-    "@vitest/utils": "^4.1.9",
+    "@types/node": "^26.1.2",
+    "@vitest/runner": "^4.1.10",
+    "@vitest/utils": "^4.1.10",
     "typescript": "^5.0.0",
     "vitest": "4.1.9"
   },
