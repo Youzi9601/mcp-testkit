@@ -34,13 +34,13 @@
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^5.10.0",
-    "@types/node": "25.9.3",
+    "@types/node": "26.1.2",
     "@vitest/coverage-v8": "^4.1.9",
-    "eslint": "^10.5.0",
+    "eslint": "^10.6.0",
     "typescript": "5.7.2",
-    "typescript-eslint": "^8.61.1",
+    "typescript-eslint": "^8.63.0",
     "vitest": "4.1.9",
-    "@vitest/runner": "^4.1.9"
+    "@vitest/runner": "^4.1.10"
   },
   "packageManager": "pnpm@9.0.0"
 }
