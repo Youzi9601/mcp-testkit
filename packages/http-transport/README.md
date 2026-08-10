@@ -16,6 +16,12 @@ Requires `@youzi9601/mcp-testkit` as a peer dependency:
 npm install @youzi9601/mcp-testkit
 ```
 
+Also requires `vitest@>=2.0.0 <5.0.0` as a peer dependency:
+
+```bash
+npm install -D vitest@4
+```
+
 ## Usage
 
 ```ts

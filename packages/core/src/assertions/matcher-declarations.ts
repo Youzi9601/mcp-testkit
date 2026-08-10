@@ -133,5 +133,34 @@ declare module 'vitest' {
      * @param schema - Expected schema definition (properties and required fields)
      */
     toMatchToolSchema(schema: Record<string, unknown>): void
+
+    // Phase 4 — Modern era (2026-07-28) matchers
+    /**
+     * Asserts a request object carries a modern-era `_meta` envelope with the
+     * `io.modelcontextprotocol/protocolVersion` key.
+     */
+    toHaveRequestMeta(): void
+
+    /**
+     * Asserts an HTTP request carries the standard MCP headers
+     * (`MCP-Protocol-Version`, `Mcp-Method`).
+     */
+    toHaveMcpHeaders(): void
+
+    /**
+     * Asserts a result has `resultType: 'complete'`.
+     */
+    toBeCompleteResult(): void
+
+    /**
+     * Asserts a modern-era result carries a `resultType` discriminator.
+     * Absent `resultType` is a spec violation in the modern era (2026-07-28).
+     */
+    toHaveResultType(): void
+
+    /**
+     * Asserts a result is an MRTR `input_required` result with `inputRequests`.
+     */
+    toBeInputRequiredResult(): void
   }
 }

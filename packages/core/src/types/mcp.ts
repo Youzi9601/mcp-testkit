@@ -48,12 +48,26 @@ export interface McpErrorResponse {
 /** JSON-RPC 2.0 response (success or error). */
 export type McpResponse = McpSuccessResponse | McpErrorResponse;
 
-/** Initialize request parameters. */
+/**
+ * Initialize request parameters.
+ *
+ * @deprecated Legacy-era (2024-10-07 … 2025-11-25) only. The 2026-07-28 modern era
+ * removes the `initialize` handshake — clients use `server/discover` instead, and
+ * every request carries its protocol version in `_meta`. Scheduled for removal at
+ * the first revision on or after 2027-07-28.
+ */
 export interface InitializeParams {
   protocolVersion?: string
   capabilities?: {
     roots?: { listChanged?: boolean }
     sampling?: Record<string, never>
+    /**
+     * Server logging capability (legacy-era).
+     * @deprecated SEP-2577 — deprecated as of 2026-07-28. Use stderr (stdio) or
+     * OpenTelemetry instead. Scheduled for removal at the first revision on or
+     * after 2027-07-28.
+     */
+    logging?: Record<string, never>
   }
   clientInfo?: {
     name: string
@@ -61,12 +75,25 @@ export interface InitializeParams {
   }
 }
 
-/** Initialize response result. */
+/**
+ * Initialize response result.
+ *
+ * @deprecated Legacy-era only. The `sampling`, `roots`, and `logging` capabilities
+ * are scheduled for removal (SEP-2577) at the first revision on or after 2027-07-28.
+ * Modern-era servers advertise capabilities via `server/discover` instead.
+ */
 export interface InitializeResult {
   protocolVersion: string
   capabilities: {
     roots?: { listChanged?: boolean }
     sampling?: Record<string, never>
+    /**
+     * Server logging capability (legacy-era).
+     * @deprecated SEP-2577 — deprecated as of 2026-07-28. Use stderr (stdio) or
+     * OpenTelemetry instead. Scheduled for removal at the first revision on or
+     * after 2027-07-28.
+     */
+    logging?: Record<string, never>
   }
   serverInfo: {
     name: string
@@ -106,7 +133,14 @@ export interface McpResource {
   mimeType?: string
 }
 
-/** Resource subscription. */
+/**
+ * Resource subscription.
+ *
+ * @deprecated Legacy-era only. The 2026-07-28 modern era replaces
+ * `resources/subscribe` / `resources/unsubscribe` with the
+ * `resourceSubscriptions` field of a `subscriptions/listen` stream. Scheduled for
+ * removal at the first revision on or after 2027-07-28.
+ */
 export interface ResourceSubscription {
   uri: string
 }

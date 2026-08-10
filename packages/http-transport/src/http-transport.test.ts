@@ -199,6 +199,34 @@ describe('HttpTransport', () => {
 
       await stopMockHttpServer(srv)
     })
+
+    it('should throw "not started: no URL configured" when url is empty', async () => {
+      // Construct with no url — the guard at send() preempts any
+      // network attempt. Covers the `!this.options.url` branch.
+      const transport = new HttpTransport({ url: '' })
+      await expect(
+        transport.send({ jsonrpc: '2.0', id: 1, method: 'test' }),
+      ).rejects.toThrow('no URL configured')
+    })
+
+    it('should throw "Request timed out" when the fetch aborts on timeout', async () => {
+      // A custom fetch that throws AbortError covers the
+      // `err.name === 'AbortError'` branch in send().
+      const abortFetch = async (): Promise<Response> => {
+        const err = new Error('The operation was aborted')
+        err.name = 'AbortError'
+        throw err
+      }
+
+      const transport = new HttpTransport({
+        url: `http://localhost:${mockPort}/mcp`,
+        fetch: abortFetch as typeof fetch,
+      })
+
+      await expect(
+        transport.send({ jsonrpc: '2.0', id: 1, method: 'test' }),
+      ).rejects.toThrow('Request timed out')
+    })
   })
 
   describe('close', () => {

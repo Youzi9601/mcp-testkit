@@ -8,7 +8,7 @@ Snapshot testing plugin for MCP servers — detect breaking tool schema changes 
 npm install -D @youzi9601/mcp-testkit-snapshot
 ```
 
-Requires `@youzi9601/mcp-testkit` and `vitest@>=2.0.0 <4.0.0` as peer dependencies:
+Requires `@youzi9601/mcp-testkit` and `vitest@>=2.0.0 <5.0.0` as peer dependencies:
 
 ```bash
 npm install @youzi9601/mcp-testkit

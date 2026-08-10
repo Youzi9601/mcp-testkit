@@ -10,7 +10,7 @@ npm install --save-dev @youzi9601/mcp-testkit-reporter-junit
 pnpm add -D @youzi9601/mcp-testkit-reporter-junit
 ```
 
-Requires `vitest@>=2.0.0`.
+Requires `vitest@>=2.0.0 <5.0.0`.
 
 ## Usage
 

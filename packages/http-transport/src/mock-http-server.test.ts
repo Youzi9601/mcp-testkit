@@ -117,6 +117,54 @@ describe('mock-http-server', () => {
 
       expect(elapsed).toBeGreaterThanOrEqual(45)
     })
+
+    it('should handle malformed JSON body gracefully (catch branch)', async () => {
+      const started = await startMockHttpServer({
+        responses: [{ jsonrpc: '2.0', id: null, result: {} }],
+        port: 38462,
+      })
+      server = started.server
+      port = started.port
+
+      // Send deliberately invalid JSON — the parse catch should set
+      // parsed.id = null and the server should still respond.
+      const res = await fetch(`http://localhost:${port}/mcp`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: 'not valid json{',
+      })
+      expect(res.status).toBe(200)
+    })
+
+    it('should reject with HeaderMismatch when modern headers disagree with body', async () => {
+      const started = await startMockHttpServer({
+        responses: [{ jsonrpc: '2.0', id: null, result: {} }],
+        port: 38463,
+        validateModernHeaders: true,
+      })
+      server = started.server
+      port = started.port
+
+      // Send a tools/call request but with a mismatched Mcp-Method header.
+      const res = await fetch(`http://localhost:${port}/mcp`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'mcp-method': 'resources/list',
+          'mcp-protocol-version': '2026-07-28',
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: { name: 'greet' },
+        }),
+      })
+
+      expect(res.status).toBe(400)
+      const body = await res.json()
+      expect(body.error.code).toBe(-32020)
+    })
   })
 
   describe('stopMockHttpServer', () => {

@@ -14,7 +14,7 @@ MCP server testing framework for TypeScript/JavaScript.
 
 ```bash
 npm install @youzi9601/mcp-testkit
-npm install -D @youzi9601/mcp-testkit-vitest
+npm install -D @youzi9601/mcp-testkit-vitest vitest@4
 ```
 
 ## Setup

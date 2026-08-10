@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
+    include: ['src/**/*.test.ts', 'src/__tests__/**/*.test.ts'],
     coverage: {
       provider: 'v8',
       thresholds: {
@@ -19,6 +20,8 @@ export default defineConfig({
         '**/fixtures/**',
         '**/index.ts',
         '**/vitest.config.ts',
+        // Deprecated re-export shim — re-exports from protocol/protocol.js.
+        '**/transport/protocol.ts',
       ],
     },
   },
