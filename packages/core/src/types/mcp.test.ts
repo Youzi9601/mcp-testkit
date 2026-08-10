@@ -88,14 +88,29 @@ describe('API types', () => {
     const mockServer: McpServer = {
       async callTool() { return {} },
       async getCapabilities() { return {} },
+      async discover() { return {} },
       async listTools() { return {} },
       async listResources() { return {} },
+      async listen() {
+        return {
+          honoredFilter: {},
+          onNotification() {},
+          async close() {},
+          get closed() { return Promise.resolve('local' as const) },
+        }
+      },
       async close() {},
+      getProtocolEra() { return 'legacy' },
+      async getServerVersion() { return undefined },
     }
     expect(typeof mockServer.callTool).toBe('function')
     expect(typeof mockServer.getCapabilities).toBe('function')
+    expect(typeof mockServer.discover).toBe('function')
     expect(typeof mockServer.listTools).toBe('function')
     expect(typeof mockServer.listResources).toBe('function')
+    expect(typeof mockServer.listen).toBe('function')
     expect(typeof mockServer.close).toBe('function')
+    expect(typeof mockServer.getProtocolEra).toBe('function')
+    expect(typeof mockServer.getServerVersion).toBe('function')
   })
 })

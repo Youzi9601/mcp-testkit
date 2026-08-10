@@ -4,6 +4,66 @@
 
 ---
 
+## Important Notes for Agents
+
+1. **Do not create large files.** If a file exceeds 300 lines, split it.
+2. **Do not skip JSDoc.** Every export needs it.
+3. **Do not add production dependencies** to core.
+4. **Always run coverage** before claiming a task is complete.
+5. **Use subagent-driven-development** for multi-step implementations.
+6. **Verify before reporting.** Run tests, not just `ls`.
+
+---
+
+## Operational Integrity
+
+### Ground truth
+
+Tool output is authoritative only when it is directly and reliably observable.
+
+Never invent, reconstruct, or guess:
+- file paths
+- branch names
+- commit hashes
+- command output
+- IDs
+- URLs
+- error messages
+- configuration values
+
+If an observation is unclear, corrupted, truncated, or ambiguous:
+
+1. Do not guess.
+2. Do not repeatedly describe the uncertainty.
+3. Re-run a deterministic command that retrieves the required value.
+4. Continue only after obtaining a reliable observation.
+
+### Failure handling
+
+When an operation fails:
+
+- Prefer a concrete recovery action over narration.
+- Do not repeatedly apologize.
+- Do not narrate internal confusion.
+- Do not speculate about tool or model failures.
+- Do not ask the user to reproduce information that can be retrieved from the environment.
+- If recovery is impossible, report the specific blocker once and stop.
+
+### Generation stability
+
+If you notice that your output is becoming repetitive, incoherent,
+or detached from the current task:
+
+- stop generating explanatory prose;
+- re-establish the current task state;
+- obtain ground truth from tools;
+- continue from the verified state.
+
+Never attempt to repair a corrupted generation by producing more
+self-referential explanation.
+
+---
+
 ## Project Overview
 
 `@youzi9601/mcp-testkit` is a TypeScript monorepo (pnpm workspaces) that provides a testing framework for MCP (Model Context Protocol) servers.
@@ -197,8 +257,8 @@ Rationale: packages are published internationally; English is the industry stand
 
 | Dependency type | Strategy |
 |----------------|----------|
-| `devDependencies` | Exact version (`vitest@2.1.8`) |
-| `peerDependencies` | Major-bounded range (`>=2.0.0 <3.0.0`) |
+| `devDependencies` | Exact version (`vitest@4.1.8`) |
+| `peerDependencies` | Major-bounded range (`>=2.0.0 <5.0.0`) |
 | `dependencies` | Workspace reference (`workspace:*`) |
 
 ### Lockfile
@@ -280,13 +340,3 @@ docs/readme
 - **Release:** On git tag `v*` — build, test, publish all packages
 - Coverage reports uploaded as artifacts
 
----
-
-## Important Notes for Agents
-
-1. **Do not create large files.** If a file exceeds 300 lines, split it.
-2. **Do not skip JSDoc.** Every export needs it.
-3. **Do not add production dependencies** to core.
-4. **Always run coverage** before claiming a task is complete.
-5. **Use subagent-driven-development** for multi-step implementations.
-6. **Verify before reporting.** Run tests, not just `ls`.

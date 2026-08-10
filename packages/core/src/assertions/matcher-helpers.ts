@@ -7,6 +7,19 @@
 
 import type { McpResponse, McpErrorResponse } from '../types/mcp.js';
 
+/**
+ * Type of the `this` context Vitest provides to each custom matcher.
+ *
+ * Shared by the legacy (`matchers.ts`) and modern (`modern-matchers.ts`) matcher
+ * implementations so they do not each redefine it.
+ */
+export type AnyMatcherState = {
+  isNot: boolean
+  promise: Promise<unknown>
+  utils: readonly { name: string; fn: (...args: never[]) => unknown }[]
+  testPath?: string
+}
+
 // ─── Shared Types ────────────────────────────────────────────────────────────
 
 /**

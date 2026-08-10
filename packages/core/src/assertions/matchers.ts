@@ -8,6 +8,7 @@
 /// <reference types="vitest/globals" />
 
 import {
+  type AnyMatcherState,
   isMcpResponse,
   isErrorResponse,
   getContent,
@@ -19,18 +20,7 @@ import {
   isTimeoutError,
   isFromToolError,
 } from './matcher-helpers.js';
-
-// Vitest 2.x does not export MatcherState — mirror the minimal interface locally
- 
-type AnyMatcherState = { isNot: boolean; promise: Promise<any>; utils: readonly { name: string; fn: (...args: any[]) => any }[]; testPath?: string };
-
-interface JsonRpcContent {
-  type: 'text' | 'image' | 'resource'
-  text?: string
-  data?: string
-  mimeType?: string
-  resource?: { uri: string; mimeType?: string }
-}
+import { registerModernMatchers } from './modern-matchers.js';
 
 // ─── Matcher Registration ────────────────────────────────────────────────────
 
@@ -39,6 +29,10 @@ interface JsonRpcContent {
  * Call this once before running tests.
  */
 export function registerMatchers(): void {
+  registerModernMatchers((matchers) => {
+    // Register modern matchers through the same expect.extend used for legacy ones.
+    ;(expect as unknown as { extend: (m: Record<string, unknown>) => void }).extend(matchers)
+  })
   ;(expect as any).extend({
     toBeValidMcpResponse(this: AnyMatcherState, received: unknown, ..._args: unknown[]) {
       if (!received || typeof received !== 'object') {

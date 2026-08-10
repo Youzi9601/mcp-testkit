@@ -85,6 +85,18 @@ const transport = new HttpTransport({ url: 'http://localhost:3000/mcp' })
 const server = await createMcpServer({ transport })
 ```
 
+Negotiate the 2026-07-28 modern era (`server/discover` + `_meta` envelope):
+
+```ts
+const server = await createMcpServer({
+  command: 'node',
+  args: ['./dist/server.js'],
+  protocol: { era: { negotiation: 'auto' } }, // 'auto' | 'legacy' | { pin: '2026-07-28' }
+})
+expect(server.getProtocolEra()).toBe('modern')
+const caps = await server.discover()
+```
+
 ### `MockMcpServer` — pure in-process mock, no subprocess
 
 Pre-program mock JSON-RPC responses without spawning any process.
@@ -191,7 +203,7 @@ export default defineConfig({
 ## Requirements
 
 - Node.js 18+
-- Vitest 2.x
+- Vitest 4.x
 
 ## License
 

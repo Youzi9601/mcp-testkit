@@ -8,6 +8,7 @@
 
 import { spawn as nodeSpawn } from 'node:child_process';
 import type { ChildProcess } from 'node:child_process';
+import { MODERN_PROTOCOL_VERSION } from '@youzi9601/mcp-testkit';
 import type { Transport } from './types.js';
 
 /**
@@ -30,6 +31,9 @@ export interface JsonRpcResponse {
   error?: { code: number; message: string }
 }
 
+/**
+ * Options for constructing an {@link HttpTransport}.
+ */
 export interface HttpTransportOptions {
   /**
    * MCP HTTP endpoint URL (e.g., 'http://localhost:3000/mcp').
@@ -38,6 +42,19 @@ export interface HttpTransportOptions {
    *           unvalidated URLs from untrusted sources to prevent SSRF risks.
    */
   url: string
+  /**
+   * Emit the 2026-07-28 modern-era standard HTTP headers on every request:
+   * `MCP-Protocol-Version`, `Mcp-Method`, and `Mcp-Name` (SEP-2243).
+   *
+   * Leave off by default so legacy 2025-era servers (which may reject unknown
+   * headers) keep working. Enable this only when speaking to a modern-era server.
+   */
+  emitModernHeaders?: boolean
+  /**
+   * Protocol version advertised in the `MCP-Protocol-Version` header (modern era).
+   * @default '2026-07-28'
+   */
+  protocolVersion?: string
   /**
    * Optional server process to start before connecting.
    * When provided, the transport will spawn the process and wait for it to be ready.
@@ -97,10 +114,27 @@ export class HttpTransport implements Transport {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
+    // Derive the `Mcp-Name` header from a `tools/call` request's tool name.
+    const mcpName =
+      request.method === 'tools/call'
+        ? (request.params as { name?: string } | undefined)?.name
+        : undefined;
+
+    const headers: Record<string, string> = {
+      ...this.requestHeaders,
+      ...(this.options.emitModernHeaders
+        ? {
+            'MCP-Protocol-Version': this.options.protocolVersion ?? MODERN_PROTOCOL_VERSION,
+            'Mcp-Method': request.method,
+            ...(mcpName ? { 'Mcp-Name': mcpName } : {}),
+          }
+        : {}),
+    };
+
     try {
       const response = await this.fetchImpl(this.options.url, {
         method: 'POST',
-        headers: this.requestHeaders,
+        headers,
         body: JSON.stringify(request),
         signal: this.options.signal ?? controller.signal,
       });

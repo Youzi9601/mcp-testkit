@@ -5,7 +5,7 @@ Vitest integration plugin, auto-registers MCP-specific custom matchers.
 ## Installation
 
 ```bash
-npm install -D @youzi9601/mcp-testkit-vitest
+npm install -D @youzi9601/mcp-testkit-vitest vitest@4
 ```
 
 ## Setup

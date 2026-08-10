@@ -19,6 +19,8 @@ export default defineConfig({
         '**/fixtures/**',
         '**/index.ts',
         '**/vitest.config.ts',
+        // Deprecated re-export shim — re-exports from protocol/protocol.js.
+        '**/transport/protocol.ts',
       ],
     },
   },
