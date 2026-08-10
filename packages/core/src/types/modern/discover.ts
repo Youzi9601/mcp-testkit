@@ -68,7 +68,7 @@ export interface DiscoverResult {
  * @returns The list of server-supported protocol versions, or `[]` if absent.
  */
 export function readSupportedVersions(result: { supportedVersions?: string[]; protocolVersions?: string[] }): string[] {
-  return result.supportedVersions ?? result.protocolVersions ?? []
+  return result.supportedVersions ?? result.protocolVersions ?? [];
 }
 
 /** Parameters for the `server/discover` RPC request. */

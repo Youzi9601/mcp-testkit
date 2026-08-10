@@ -14,7 +14,7 @@ type MatcherResult = {
   actual?: unknown
   expected?: unknown
   message: () => string
-}
+};
 
 /**
  * Pure assertion: whether a request carries a modern-era `_meta` envelope with the
@@ -24,11 +24,11 @@ type MatcherResult = {
  * @returns `true` when the `_meta` envelope declares a protocol version.
  */
 export function assertHasRequestMeta(received: unknown): boolean {
-  if (!received || typeof received !== 'object') return false
-  const params = (received as { params?: { _meta?: unknown } }).params
-  const meta = params?._meta
-  if (typeof meta !== 'object' || meta === null) return false
-  return 'io.modelcontextprotocol/protocolVersion' in meta
+  if (!received || typeof received !== 'object') return false;
+  const params = (received as { params?: { _meta?: unknown } }).params;
+  const meta = params?._meta;
+  if (typeof meta !== 'object' || meta === null) return false;
+  return 'io.modelcontextprotocol/protocolVersion' in meta;
 }
 
 /**
@@ -39,14 +39,14 @@ export function assertHasRequestMeta(received: unknown): boolean {
  * @returns `true` when both standard headers are present (case-insensitive).
  */
 export function assertHasMcpHeaders(received: unknown): boolean {
-  if (!received || typeof received !== 'object') return false
-  const headers = (received as { headers?: Record<string, unknown> }).headers ?? {}
+  if (!received || typeof received !== 'object') return false;
+  const headers = (received as { headers?: Record<string, unknown> }).headers ?? {};
   // Case-insensitive lookup: normalize all header keys to lowercase before matching.
-  const lower: Record<string, unknown> = {}
+  const lower: Record<string, unknown> = {};
   for (const k of Object.keys(headers)) {
-    lower[k.toLowerCase()] = headers[k]
+    lower[k.toLowerCase()] = headers[k];
   }
-  return !!lower['mcp-protocol-version'] && !!lower['mcp-method']
+  return !!lower['mcp-protocol-version'] && !!lower['mcp-method'];
 }
 
 /**
@@ -60,7 +60,7 @@ export function assertCompleteResult(received: unknown): boolean {
     typeof received === 'object' &&
     received !== null &&
     (received as { resultType?: string }).resultType === 'complete'
-  )
+  );
 }
 
 /**
@@ -74,13 +74,13 @@ export function assertCompleteResult(received: unknown): boolean {
  * @returns `true` when `resultType` is present and a known value (`'complete'` or `'input_required'`).
  */
 export function assertHasResultType(received: unknown): boolean {
-  if (typeof received !== 'object' || received === null) return false
+  if (typeof received !== 'object' || received === null) return false;
   const obj = received as {
     resultType?: string
     result?: { resultType?: string }
-  }
-  const rt = obj.resultType ?? obj.result?.resultType
-  return rt === 'complete' || rt === 'input_required'
+  };
+  const rt = obj.resultType ?? obj.result?.resultType;
+  return rt === 'complete' || rt === 'input_required';
 }
 
 /**
@@ -91,15 +91,15 @@ export function assertHasResultType(received: unknown): boolean {
  * @returns `true` when `resultType` is `'input_required'` and `inputRequests` is present.
  */
 export function assertInputRequiredResult(received: unknown): boolean {
-  if (typeof received !== 'object' || received === null) return false
+  if (typeof received !== 'object' || received === null) return false;
   const obj = received as {
     resultType?: string
     inputRequests?: unknown
     result?: { resultType?: string; inputRequests?: unknown }
-  }
-  const resultType = obj.resultType ?? obj.result?.resultType
-  const inputRequests = obj.inputRequests ?? obj.result?.inputRequests
-  return resultType === 'input_required' && inputRequests !== undefined
+  };
+  const resultType = obj.resultType ?? obj.result?.resultType;
+  const inputRequests = obj.inputRequests ?? obj.result?.inputRequests;
+  return resultType === 'input_required' && inputRequests !== undefined;
 }
 
 /**
@@ -113,30 +113,30 @@ export function registerModernMatchers(
 ): void {
   extend({
     toHaveRequestMeta(this: AnyMatcherState, received: unknown): MatcherResult {
-      const pass = assertHasRequestMeta(received)
-      return result(pass, received, 'a request with a io.modelcontextprotocol/protocolVersion _meta envelope')
+      const pass = assertHasRequestMeta(received);
+      return result(pass, received, 'a request with a io.modelcontextprotocol/protocolVersion _meta envelope');
     },
 
     toHaveMcpHeaders(this: AnyMatcherState, received: unknown): MatcherResult {
-      const pass = assertHasMcpHeaders(received)
-      return result(pass, received, 'MCP-Protocol-Version and Mcp-Method headers')
+      const pass = assertHasMcpHeaders(received);
+      return result(pass, received, 'MCP-Protocol-Version and Mcp-Method headers');
     },
 
     toBeCompleteResult(this: AnyMatcherState, received: unknown): MatcherResult {
-      const pass = assertCompleteResult(received)
-      return result(pass, received, '{ resultType: "complete" }')
+      const pass = assertCompleteResult(received);
+      return result(pass, received, '{ resultType: "complete" }');
     },
 
     toHaveResultType(this: AnyMatcherState, received: unknown): MatcherResult {
-      const pass = assertHasResultType(received)
-      return result(pass, received, 'a result with resultType (\'complete\' or \'input_required\') — absent is a spec violation in the modern era')
+      const pass = assertHasResultType(received);
+      return result(pass, received, 'a result with resultType (\'complete\' or \'input_required\') — absent is a spec violation in the modern era');
     },
 
     toBeInputRequiredResult(this: AnyMatcherState, received: unknown): MatcherResult {
-      const pass = assertInputRequiredResult(received)
-      return result(pass, received, '{ resultType: "input_required", inputRequests: {...} }')
+      const pass = assertInputRequiredResult(received);
+      return result(pass, received, '{ resultType: "input_required", inputRequests: {...} }');
     },
-  })
+  });
 }
 
 /**
@@ -156,5 +156,5 @@ function result(pass: boolean, actual: unknown, expected: string): MatcherResult
       pass
         ? `Expected value not to match: ${expected}`
         : `Expected ${expected}, got ${JSON.stringify(actual)}`,
-  }
+  };
 }

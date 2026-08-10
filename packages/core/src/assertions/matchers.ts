@@ -31,7 +31,7 @@ import { registerModernMatchers } from './modern-matchers.js';
 export function registerMatchers(): void {
   registerModernMatchers((matchers) => {
     // Register modern matchers through the same expect.extend used for legacy ones.
-    ;(expect as unknown as { extend: (m: Record<string, unknown>) => void }).extend(matchers)
+    ;(expect as unknown as { extend: (m: Record<string, unknown>) => void }).extend(matchers);
   })
   ;(expect as any).extend({
     toBeValidMcpResponse(this: AnyMatcherState, received: unknown, ..._args: unknown[]) {

@@ -27,7 +27,7 @@ export type ProtocolEra = 'legacy' | 'modern';
 export type EraNegotiationMode =
   | 'legacy'
   | 'auto'
-  | { pin: string }
+  | { pin: string };
 
 /** Options for {@link negotiateEra}. */
 export interface EraNegotiationOptions {
@@ -53,10 +53,10 @@ export interface EraNegotiationResult {
 
 /** Thrown when a pinned modern era cannot be negotiated. */
 export class EraNegotiationFailedError extends Error {
-  readonly code = 'ERA_NEGOTIATION_FAILED'
+  readonly code = 'ERA_NEGOTIATION_FAILED';
   constructor(message: string) {
-    super(message)
-    this.name = 'EraNegotiationFailedError'
+    super(message);
+    this.name = 'EraNegotiationFailedError';
   }
 }
 
@@ -76,13 +76,13 @@ async function probeDiscover(
   clientInfo: { name: string; version: string },
   timeoutMs: number,
 ): Promise<DiscoverResult | undefined> {
-  const id = 1
+  const id = 1;
   const request = createRequest(
     id,
     'server/discover',
     { protocolVersions: supportedVersions },
     { protocolVersion: MODERN_PROTOCOL_VERSION },
-  ) as unknown as Record<string, unknown>
+  ) as unknown as Record<string, unknown>;
 
   // Attach the modern `_meta` envelope to the probe request.
   // clientCapabilities is MUST per the 2026-07-28 spec; emit an empty object
@@ -92,41 +92,41 @@ async function probeDiscover(
     [REQUEST_META_KEYS.protocolVersion]: MODERN_PROTOCOL_VERSION,
     [REQUEST_META_KEYS.clientInfo]: clientInfo,
     [REQUEST_META_KEYS.clientCapabilities]: {},
-  }
+  };
 
-  let response: object
+  let response: object;
   try {
-    response = await withTimeout(transport.send(request), timeoutMs)
+    response = await withTimeout(transport.send(request), timeoutMs);
   } catch (err) {
     // A `-32601` (MethodNotFound) from a legacy-only server, or a probe timeout on
     // stdio (some legacy servers never answer pre-`initialize` requests), both mean
     // legacy — not an error.
-    const errCode = (err as { code?: number } | undefined)?.code
-    const errMsg = err instanceof Error ? err.message : String(err)
+    const errCode = (err as { code?: number } | undefined)?.code;
+    const errMsg = err instanceof Error ? err.message : String(err);
     if (errCode === JsonRpcErrorCode.MethodNotFound) {
-      return undefined
+      return undefined;
     }
     if (err instanceof Error && /timeout/i.test(err.message)) {
-      return undefined
+      return undefined;
     }
     // A malformed/wrong-version rejection is evidence of a modern-era mismatch, not
     // legacy. Re-throw so the caller can decide with the probe error in hand.
     if (errCode === McpErrorCode.UnsupportedProtocolVersion) {
       throw new EraNegotiationFailedError(
         `Server did not offer a mutual protocol version via server/discover: ${errMsg}`,
-      )
+      );
     }
-    throw err
+    throw err;
   }
 
   // Accept both transport shapes: a wrapped JSON-RPC response ({ result }) or an
   // already-unwrapped result (StdioTransport unwraps before resolving).
-  const raw = response as { result?: unknown }
-  const result = 'result' in raw ? raw.result : response
+  const raw = response as { result?: unknown };
+  const result = 'result' in raw ? raw.result : response;
   if (typeof result === 'object' && result !== null) {
-    return result as DiscoverResult
+    return result as DiscoverResult;
   }
-  return undefined
+  return undefined;
 }
 
 /**
@@ -142,55 +142,55 @@ export async function negotiateEra(
   transport: Transport,
   options: EraNegotiationOptions = {},
 ): Promise<EraNegotiationResult> {
-  const mode = options.mode ?? 'legacy'
+  const mode = options.mode ?? 'legacy';
   const clientInfo = options.clientInfo ?? {
     name: DEFAULT_CLIENT_NAME,
     version: DEFAULT_CLIENT_VERSION,
-  }
-  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT
-  const supported = options.supportedProtocolVersions ?? ['2026-07-28']
+  };
+  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT;
+  const supported = options.supportedProtocolVersions ?? ['2026-07-28'];
 
   // Legacy mode: no probe, straight to `initialize`.
   if (mode === 'legacy') {
     return {
       era: 'legacy',
       protocolVersion: '2024-11-05',
-    }
+    };
   }
 
-  const pinned = typeof mode === 'object' ? mode.pin : undefined
-  const probeVersions = pinned ? [pinned] : supported
+  const pinned = typeof mode === 'object' ? mode.pin : undefined;
+  const probeVersions = pinned ? [pinned] : supported;
 
-  const discover = await probeDiscover(transport, probeVersions, clientInfo, timeoutMs)
+  const discover = await probeDiscover(transport, probeVersions, clientInfo, timeoutMs);
 
   if (discover) {
-    const negotiated = pickMutualVersion(discover, probeVersions, pinned)
+    const negotiated = pickMutualVersion(discover, probeVersions, pinned);
     return {
       era: 'modern',
       discover,
       protocolVersion: negotiated,
-    }
+    };
   }
 
   // Server did not answer `server/discover`.
   if (pinned) {
     throw new EraNegotiationFailedError(
       `Version negotiation failed: the server did not offer pinned protocol version ${pinned} via server/discover (no fallback in pin mode)`,
-    )
+    );
   }
 
   // `'auto'`: fall back to legacy only if the client still lists a pre-2026 version.
-  const hasLegacyFallback = probeVersions.some((v) => v < '2026-07-28')
+  const hasLegacyFallback = probeVersions.some((v) => v < '2026-07-28');
   if (!hasLegacyFallback) {
     throw new EraNegotiationFailedError(
       'Version negotiation failed: the server did not answer server/discover and the client offers no legacy fallback',
-    )
+    );
   }
 
   return {
     era: 'legacy',
     protocolVersion: '2024-11-05',
-  }
+  };
 }
 
 /**
@@ -201,40 +201,40 @@ function pickMutualVersion(
   clientVersions: string[],
   pinned: string | undefined,
 ): string {
-  const serverVersions = readSupportedVersions(discover)
+  const serverVersions = readSupportedVersions(discover);
   if (pinned) {
-    if (serverVersions.includes(pinned)) return pinned
+    if (serverVersions.includes(pinned)) return pinned;
     throw new EraNegotiationFailedError(
       `Version negotiation failed: the server did not offer pinned protocol version ${pinned} via server/discover (no fallback in pin mode)`,
-    )
+    );
   }
   const mutual = serverVersions
     .filter((v) => clientVersions.includes(v))
     .sort()
-    .at(-1)
+    .at(-1);
   if (mutual === undefined) {
     throw new EraNegotiationFailedError(
       `Version negotiation failed: the server offered ${JSON.stringify(serverVersions)} via server/discover but none intersect the client's supported versions ${JSON.stringify(clientVersions)}`,
-    )
+    );
   }
-  return mutual
+  return mutual;
 }
 
 /** Runs a promise with a timeout that rejects on expiry. */
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(`Probe timeout after ${ms}ms`)), ms)
+    const timer = setTimeout(() => reject(new Error(`Probe timeout after ${ms}ms`)), ms);
     promise.then(
       (v) => {
-        clearTimeout(timer)
-        resolve(v)
+        clearTimeout(timer);
+        resolve(v);
       },
       (e) => {
-        clearTimeout(timer)
-        reject(e)
+        clearTimeout(timer);
+        reject(e);
       },
-    )
-  })
+    );
+  });
 }
 
 /**
@@ -244,5 +244,5 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
  * @returns `true` for the modern era, `false` for legacy.
  */
 export function isModernVersion(version: string): boolean {
-  return version >= '2026-07-28'
+  return version >= '2026-07-28';
 }

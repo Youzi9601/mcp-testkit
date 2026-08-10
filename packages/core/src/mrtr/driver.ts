@@ -16,12 +16,12 @@ import {
 } from '../protocol/helpers.js';
 
 /** A function that sends one `tools/call` and returns the raw response. */
-export type SendCall = (params: Record<string, unknown>) => Promise<unknown>
+export type SendCall = (params: Record<string, unknown>) => Promise<unknown>;
 
 /** Resolves the server's `input_required` requests into `inputResponses`. */
 export type ResolveInput = (
   inputRequests: Record<string, unknown>,
-) => Promise<Record<string, unknown> | undefined>
+) => Promise<Record<string, unknown> | undefined>;
 
 /** Options for {@link runCallWithMrtr}. */
 export interface MrtrOptions {
@@ -47,38 +47,38 @@ export async function runCallWithMrtr(
   baseParams: Record<string, unknown>,
   options: MrtrOptions = {},
 ): Promise<unknown> {
-  const maxRounds = options.maxRounds ?? 10
-  const resolveInput = options.resolveInput
+  const maxRounds = options.maxRounds ?? 10;
+  const resolveInput = options.resolveInput;
 
-  let inputResponses: Record<string, unknown> | undefined
-  let requestState: string | undefined
+  let inputResponses: Record<string, unknown> | undefined;
+  let requestState: string | undefined;
 
   for (let round = 0; round < maxRounds; round++) {
-    const params: Record<string, unknown> = { ...baseParams }
-    if (inputResponses) params['inputResponses'] = inputResponses
-    if (requestState !== undefined) params['requestState'] = requestState
+    const params: Record<string, unknown> = { ...baseParams };
+    if (inputResponses) params['inputResponses'] = inputResponses;
+    if (requestState !== undefined) params['requestState'] = requestState;
 
-    const response = await sendCall(params)
+    const response = await sendCall(params);
 
     if (!isInputRequiredResponse(response) || !resolveInput) {
-      return unwrapResult(response)
+      return unwrapResult(response);
     }
 
     // Echo requestState byte-exact on the retry.
-    const body = unwrapResult(response) as ParsedBody
-    requestState = body.requestState
+    const body = unwrapResult(response) as ParsedBody;
+    requestState = body.requestState;
 
     const answers = await resolveInput(
       (body.inputRequests as Record<string, unknown>) ?? {},
-    )
+    );
     if (answers === undefined) {
       // Test opted out of resolving this round — surface the interim result.
-      return unwrapResult(response)
+      return unwrapResult(response);
     }
-    inputResponses = answers
+    inputResponses = answers;
   }
 
   // Rounds exhausted without a complete result — surface the last excchange.
-  const finalResponse = await sendCall({ ...baseParams, ...(inputResponses && { inputResponses }) })
-  return unwrapResult(finalResponse)
+  const finalResponse = await sendCall({ ...baseParams, ...(inputResponses && { inputResponses }) });
+  return unwrapResult(finalResponse);
 }

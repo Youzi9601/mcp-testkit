@@ -39,7 +39,7 @@ export function createRequestBuilder(ctx: RequestBuilderContext) {
     method: string,
     params?: Record<string, unknown>,
   ): Record<string, unknown> {
-    const request = createRequest(id, method, params, ctx.proto) as unknown as Record<string, unknown>
+    const request = createRequest(id, method, params, ctx.proto) as unknown as Record<string, unknown>;
     if (ctx.era === 'modern') {
       attachRequestMeta(
         request as unknown as RequestWithParams,
@@ -48,10 +48,10 @@ export function createRequestBuilder(ctx: RequestBuilderContext) {
           clientInfo: ctx.clientInfo,
           clientCapabilities: ctx.proto.metaKeys?.clientCapabilities ?? {},
         },
-      )
+      );
     }
-    return request
-  }
+    return request;
+  };
 }
 
 /**
@@ -86,16 +86,16 @@ export function attachRequestMeta(
     clientCapabilities?: Record<string, unknown>
   },
 ): RequestWithParams {
-  const params = request.params ?? {}
-  const meta = (params._meta as Record<string, unknown> | undefined) ?? {}
-  meta[REQUEST_META_KEYS.protocolVersion] = opts.protocolVersion
-  meta[REQUEST_META_KEYS.clientInfo] = opts.clientInfo
+  const params = request.params ?? {};
+  const meta = (params._meta as Record<string, unknown> | undefined) ?? {};
+  meta[REQUEST_META_KEYS.protocolVersion] = opts.protocolVersion;
+  meta[REQUEST_META_KEYS.clientInfo] = opts.clientInfo;
   if (opts.clientCapabilities) {
-    meta[REQUEST_META_KEYS.clientCapabilities] = opts.clientCapabilities
+    meta[REQUEST_META_KEYS.clientCapabilities] = opts.clientCapabilities;
   }
-  params._meta = meta
-  request.params = params
-  return request
+  params._meta = meta;
+  request.params = params;
+  return request;
 }
 
 /**
@@ -107,9 +107,9 @@ export function attachRequestMeta(
  * @returns The unwrapped result body.
  */
 export function unwrapResult(response: unknown): unknown {
-  if (typeof response !== 'object' || response === null) return response
-  const raw = response as { result?: unknown }
-  return 'result' in raw ? raw.result : response
+  if (typeof response !== 'object' || response === null) return response;
+  const raw = response as { result?: unknown };
+  return 'result' in raw ? raw.result : response;
 }
 
 /**
@@ -119,9 +119,9 @@ export function unwrapResult(response: unknown): unknown {
  * @returns The resultType discriminator, or `undefined`.
  */
 export function readResultType(response: unknown): McpResultType | undefined {
-  const result = unwrapResult(response) as ParsedBody | undefined
-  const rt = result?.resultType as McpResultType | undefined
-  return rt === RESULT_TYPE.COMPLETE || rt === RESULT_TYPE.INPUT_REQUIRED ? rt : undefined
+  const result = unwrapResult(response) as ParsedBody | undefined;
+  const rt = result?.resultType as McpResultType | undefined;
+  return rt === RESULT_TYPE.COMPLETE || rt === RESULT_TYPE.INPUT_REQUIRED ? rt : undefined;
 }
 
 /**
@@ -133,11 +133,11 @@ export function readResultType(response: unknown): McpResultType | undefined {
 export function readServerInfo(
   response: unknown,
 ): { name: string; version: string } | undefined {
-  const result = unwrapResult(response) as ParsedBody | undefined
-  const info = result?._meta?.[REQUEST_META_KEYS.serverInfo]
+  const result = unwrapResult(response) as ParsedBody | undefined;
+  const info = result?._meta?.[REQUEST_META_KEYS.serverInfo];
   return typeof info === 'object' && info !== null
     ? (info as { name: string; version: string })
-    : undefined
+    : undefined;
 }
 
 /**
@@ -147,5 +147,5 @@ export function readServerInfo(
  * @returns `true` when `resultType` is `'input_required'`.
  */
 export function isInputRequiredResponse(response: unknown): boolean {
-  return readResultType(response) === RESULT_TYPE.INPUT_REQUIRED
+  return readResultType(response) === RESULT_TYPE.INPUT_REQUIRED;
 }

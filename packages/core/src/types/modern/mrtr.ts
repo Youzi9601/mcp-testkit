@@ -33,7 +33,7 @@ export type InputRequest =
   | { kind: 'elicit' }
   | { kind: 'elicitUrl' }
   | { kind: 'sampling' }
-  | { kind: 'roots' }
+  | { kind: 'roots' };
 
 /**
  * Interim MRTR result — the server needs more input from the client before the

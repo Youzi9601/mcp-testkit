@@ -18,7 +18,7 @@ export type AnyMatcherState = {
   promise: Promise<unknown>
   utils: readonly { name: string; fn: (...args: never[]) => unknown }[]
   testPath?: string
-}
+};
 
 // ─── Shared Types ────────────────────────────────────────────────────────────
 
