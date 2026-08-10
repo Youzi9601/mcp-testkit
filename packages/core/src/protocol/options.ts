@@ -62,7 +62,7 @@ export interface McpProtocolOptions {
   }
 
   /**
-   * Then set of `_meta` envelope keys to attach to every request (modern era).
+   * The set of `_meta` envelope keys to attach to every request (modern era).
    * The protocol version and clientInfo are always attached when the era is modern.
    */
   metaKeys?: {

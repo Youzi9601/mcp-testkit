@@ -84,7 +84,7 @@ export async function createMcpServer(options: ServerOptions): Promise<McpServer
   };
 
   // Era negotiation (defaults to legacy unless configured).
-  let era: 'legacy' | 'modern' | undefined;
+  let era: 'legacy' | 'modern' = 'legacy';
   let negotiatedVersion = proto.protocolVersion ?? LATEST_PROTOCOL_VERSION;
   let discoverResult: DiscoverResult | undefined;
   let serverInfo: { name: string; version: string } | undefined;
@@ -265,7 +265,7 @@ export async function createMcpServer(options: ServerOptions): Promise<McpServer
     },
 
     /** Returns the negotiated protocol era. */
-    getProtocolEra(): 'legacy' | 'modern' | undefined {
+    getProtocolEra(): 'legacy' | 'modern' {
       return era;
     },
 

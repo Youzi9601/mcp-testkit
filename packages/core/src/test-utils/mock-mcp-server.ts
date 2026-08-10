@@ -114,7 +114,10 @@ function respondTo(req) {' + NL + '\
       if (seen === 0) {' + NL + '\
         return { jsonrpc: jsonrpcVersion, id: req.id, result: Object.assign({}, rule.result, { resultType: "input_required", inputRequests: rule.result && rule.result.inputRequests || {} }) };' + NL + '\
       }' + NL + '\
-      return { jsonrpc: jsonrpcVersion, id: req.id, result: Object.assign({}, rule.completeResult || rule.result) };' + NL + '\
+      return { jsonrpc: jsonrpcVersion, id: req.id, result: Object.assign({}, rule.completeResult || rule.result, { resultType: "complete" }) };' + NL + '\
+    }' + NL + '\
+    if (rule.resultType === "complete") {' + NL + '\
+      return { jsonrpc: jsonrpcVersion, id: req.id, result: Object.assign({}, rule.result, { resultType: "complete" }) };' + NL + '\
     }' + NL + '\
     return { jsonrpc: jsonrpcVersion, id: req.id, result: Object.assign({}, rule.result) };' + NL + '\
   }' + NL + '\

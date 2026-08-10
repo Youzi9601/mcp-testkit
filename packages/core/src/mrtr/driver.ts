@@ -78,7 +78,11 @@ export async function runCallWithMrtr(
     inputResponses = answers;
   }
 
-  // Rounds exhausted without a complete result — surface the last excchange.
-  const finalResponse = await sendCall({ ...baseParams, ...(inputResponses && { inputResponses }) });
+  // Rounds exhausted without a complete result — surface the last exchange.
+  const finalResponse = await sendCall({
+    ...baseParams,
+    ...(inputResponses && { inputResponses }),
+    ...(requestState !== undefined && { requestState }),
+  });
   return unwrapResult(finalResponse);
 }

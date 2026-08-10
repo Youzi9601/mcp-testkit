@@ -92,12 +92,18 @@ export async function startMockHttpServer(
 
           // Modern header validation (SEP-2243): reject a mismatch with -32020.
           if (options.validateModernHeaders && parsed.method) {
-            const headerMethod = headers['mcp-method'];
-            const headerVersion = headers['mcp-protocol-version'];
+            const headerMethod = Array.isArray(headers['mcp-method'])
+              ? headers['mcp-method'][0]
+              : headers['mcp-method'];
+            const headerVersion = Array.isArray(headers['mcp-protocol-version'])
+              ? headers['mcp-protocol-version'][0]
+              : headers['mcp-protocol-version'];
             const name = parsed.method === 'tools/call'
               ? (parsed.params as { name?: string } | undefined)?.name
               : undefined;
-            const headerName = headers['mcp-name'];
+            const headerName = Array.isArray(headers['mcp-name'])
+              ? headers['mcp-name'][0]
+              : headers['mcp-name'];
 
             const mismatch =
               headerMethod !== parsed.method ||
