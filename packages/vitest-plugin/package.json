@@ -1,6 +1,6 @@
 {
   "name": "@youzi9601/mcp-testkit-vitest",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Vitest plugin for mcp-testkit",
   "type": "module",
   "files": [
