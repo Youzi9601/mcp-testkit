@@ -36,13 +36,13 @@
     "clean": "rm -rf dist"
   },
   "peerDependencies": {
-    "vitest": ">=2.0.0 <5.0.0",
-    "@youzi9601/mcp-testkit": "workspace:*"
+    "@youzi9601/mcp-testkit": "workspace:*",
+    "vitest": ">=2.0.0 <5.0.0"
   },
   "devDependencies": {
-    "vitest": "4.1.9",
-    "@types/node": "^26.1.2",
-    "typescript": "^5.0.0"
+    "@types/node": "^26.2.0",
+    "typescript": "^5.0.0",
+    "vitest": "4.1.10"
   },
   "repository": {
     "type": "git",
